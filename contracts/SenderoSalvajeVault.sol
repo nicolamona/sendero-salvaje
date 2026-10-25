@@ -14,9 +14,8 @@ pragma solidity ^0.8.24;
  * - Available balance, expedition principal, staking principal and reward
  *   reserves accounted separately.
  * - User withdrawals use checks-effects-interactions and reentrancy protection.
- * - Expedition settlement is explicit and auditable, but the settlement operator
- *   is trusted in this draft and can determine the payout. This is NOT production
- *   safe until the settlement/oracle governance model is independently reviewed.
+ * - Expedition payouts are derived from fixed outcomes approved by a signer quorum.
+ *   Signer governance and game-result integrity still require independent review.
  * - Staking rewards are not guaranteed: they can only be reserved if pre-funded.
  */
 import {Ownable2Step} from "@openzeppelin/contracts/access/Ownable2Step.sol";
@@ -60,6 +59,7 @@ contract SenderoSalvajeVault is Ownable2Step, ReentrancyGuard, Pausable {
     uint256 public expeditionRewardReserve;
 
     mapping(address => bool) public settlementSigners;
+    mapping(address => bool) private _settlementSignerEverAdded;
     uint8 public settlementQuorum;
     mapping(bytes32 => mapping(address => uint8)) public expeditionSignerVote;
     mapping(bytes32 => mapping(uint8 => uint8)) public expeditionOutcomeVotes;
@@ -110,6 +110,7 @@ contract SenderoSalvajeVault is Ownable2Step, ReentrancyGuard, Pausable {
     constructor(address initialOwner) Ownable(initialOwner) {
         if (initialOwner == address(0)) revert InvalidRecipient();
         settlementSigners[initialOwner] = true;
+        _settlementSignerEverAdded[initialOwner] = true;
         _settlementSignerList.push(initialOwner);
         settlementQuorum = 2;
     }
@@ -330,9 +331,10 @@ contract SenderoSalvajeVault is Ownable2Step, ReentrancyGuard, Pausable {
             }
             if (count < settlementQuorum) revert InvalidQuorum();
         }
-        if (enabled && !settlementSigners[signer]) {
+        if (enabled && !_settlementSignerEverAdded[signer]) {
             if (_settlementSignerList.length >= 16) revert InvalidQuorum();
             _settlementSignerList.push(signer);
+            _settlementSignerEverAdded[signer] = true;
         }
         settlementSigners[signer] = enabled;
         emit SettlementSignerChanged(signer, enabled);
