@@ -1052,7 +1052,7 @@ creature.visible=false;scene.add(creature);arCreature=creature;arSession=await n
   const details=$("walletDetails"),connect=$("walletConnectBtn"),disconnect=$("walletDisconnectBtn"),networkBtn=$("walletNetworkBtn");
   if(!details||!connect||!disconnect||!networkBtn)return;
   const provider=walletProvider||window.ethereum;
-  if(!provider){walletAccount=null;details.classList.add("hidden");disconnect.classList.add("hidden");connect.disabled=false;connect.textContent="Conectar con Base Wallet";networkBtn.disabled=true;walletStatus("No se detectó una billetera en este navegador. En Android, abrí esta URL desde el navegador Web3 de Base / Coinbase Wallet y volvé a tocar Conectar billetera.","warn");return}
+  if(!provider){walletAccount=null;details.classList.add("hidden");disconnect.classList.add("hidden");connect.disabled=false;connect.textContent="Conectar con Base Wallet";networkBtn.disabled=true;walletStatus("Elegí Base Wallet o MetaMask. En Android se intentará abrir la app correspondiente; si no funciona, probá desde el navegador interno de esa billetera.","warn");return}
   walletProvider=provider;
   let accounts=[],chainId="";
   try{accounts=await provider.request({method:"eth_accounts"});chainId=await provider.request({method:"eth_chainId"})}catch(e){walletStatus("No se pudo consultar la billetera. Revisá que esté desbloqueada e intentá de nuevo.","warn");return}
