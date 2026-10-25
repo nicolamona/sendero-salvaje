@@ -783,12 +783,12 @@ video,.cameraWrap,.arCanvasWrap{border-radius:13px!important}
 <section class="panel walletPanel" id="walletPanel" aria-labelledby="walletTitle">
  <div class="walletHeading"><div><h2 id="walletTitle">🔗 Billetera cripto</h2><p class="small">Conexión no custodial · Solo testnet · Sin transacciones</p></div><span class="walletBadge">TESTNET</span></div>
  <p id="walletStatus" class="walletStatus" role="status" aria-live="polite">Billetera desconectada. El juego funciona igual sin conectar una.</p>
-  <div class="notice walletBaseHelp"><strong>¿Usás Coinbase Wallet / Base en Android?</strong><br>Para conectar esa billetera, abrí la app Base (antes Coinbase Wallet), entrá en su navegador Web3 y pegá allí la URL de esta prueba. Si abrís el juego desde Brave, se conectará la billetera que Brave exponga, no necesariamente Coinbase.</div>
+  <div class="notice walletBaseHelp">Elegí explícitamente qué billetera querés conectar. Podés usar el juego desde Brave o cualquier navegador compatible; no hace falta elegir la billetera que el navegador detecte automáticamente.</div>
  <div id="walletDetails" class="walletDetails hidden">
   <div class="walletDetail"><span class="small">Dirección conectada</span><strong id="walletAddress">—</strong><button type="button" id="walletCopyBtn" class="walletMiniBtn">Copiar dirección</button></div>
   <div class="walletDetail"><span class="small">Red detectada</span><strong id="walletNetwork">—</strong></div>
  </div>
- <div class="walletActions"><button type="button" id="walletConnectBtn" class="primary">Conectar con Base Wallet</button><button type="button" id="walletMetaMaskBtn">Conectar con MetaMask</button><button type="button" id="walletNetworkBtn">Usar Base Sepolia</button><button type="button" id="walletDisconnectBtn" class="walletMiniBtn hidden">Desconectar vista</button></div>
+ <div class="walletActions"><button type="button" id="walletConnectBtn" class="primary">Elegir billetera</button><button type="button" id="walletNetworkBtn">Usar Base Sepolia</button><button type="button" id="walletDisconnectBtn" class="walletMiniBtn hidden">Desconectar vista</button></div><div id="walletChoicePanel" class="walletActions hidden" style="margin-top:8px"><button type="button" id="walletBaseChoiceBtn">🟦 Base Wallet</button><button type="button" id="walletMetaMaskBtn">🦊 MetaMask</button><button type="button" id="walletCancelChoiceBtn" class="walletMiniBtn" style="grid-column:1/-1">Cancelar</button></div>
  <p class="small walletFootnote">Nunca ingreses tu frase semilla ni tu clave privada aquí. Esta versión no pide firmas, no envía fondos y no modifica tus monedas del juego.</p>
 </section>
 <section class="panel" id="exploreView">
@@ -1052,7 +1052,7 @@ creature.visible=false;scene.add(creature);arCreature=creature;arSession=await n
   const details=$("walletDetails"),connect=$("walletConnectBtn"),disconnect=$("walletDisconnectBtn"),networkBtn=$("walletNetworkBtn");
   if(!details||!connect||!disconnect||!networkBtn)return;
   const provider=walletProvider||window.ethereum;
-  if(!provider){walletAccount=null;details.classList.add("hidden");disconnect.classList.add("hidden");connect.disabled=false;connect.textContent="Conectar con Base Wallet";networkBtn.disabled=true;walletStatus("Elegí Base Wallet o MetaMask. En Android se intentará abrir la app correspondiente; si no funciona, probá desde el navegador interno de esa billetera.","warn");return}
+  if(!provider){walletAccount=null;details.classList.add("hidden");disconnect.classList.add("hidden");connect.disabled=false;connect.textContent="Elegir billetera";networkBtn.disabled=true;walletStatus("Elegí Base Wallet o MetaMask para continuar.","warn");return}
   walletProvider=provider;
   let accounts=[],chainId="";
   try{accounts=await provider.request({method:"eth_accounts"});chainId=await provider.request({method:"eth_chainId"})}catch(e){walletStatus("No se pudo consultar la billetera. Revisá que esté desbloqueada e intentá de nuevo.","warn");return}
@@ -1063,16 +1063,16 @@ creature.visible=false;scene.add(creature);arCreature=creature;arSession=await n
    $("walletAddress").textContent=walletShort(walletAccount);
    $("walletAddress").title=walletAccount;
    details.classList.remove("hidden");disconnect.classList.remove("hidden");
-   connect.textContent="Billetera conectada";connect.disabled=false;
+   connect.textContent="Billetera conectada";connect.disabled=false;$("walletChoicePanel").classList.add("hidden");
    walletStatus(chainId.toLowerCase()===EXPECTED_CHAIN_ID?"Conectada a Base Sepolia. Solo se lee la cuenta y la red; no se enviaron transacciones.":"Billetera conectada, pero la red no es Base Sepolia. Cambiá a la testnet antes de continuar.",chainId.toLowerCase()===EXPECTED_CHAIN_ID?"ok":"warn");
   }else{
-   details.classList.add("hidden");disconnect.classList.add("hidden");connect.textContent="Conectar con Base Wallet";connect.disabled=false;
+   details.classList.add("hidden");disconnect.classList.add("hidden");connect.textContent="Elegir billetera";connect.disabled=false;
    walletStatus("Billetera disponible, todavía no conectada. No se solicitarán firmas ni fondos.");
   }
  };
  const walletConnect=async()=>{
   activeWallet="base";
-  const button=$("walletConnectBtn");
+  const button=$("walletBaseChoiceBtn");
   button.disabled=true;button.textContent="Abriendo Base Wallet…";
   try{
    // SDK oficial: permite enlazar una dapp abierta en un navegador móvil con Base Wallet.
@@ -1100,7 +1100,7 @@ creature.visible=false;scene.add(creature);arCreature=creature;arSession=await n
    walletStatus(code===4001?"Conexión rechazada. No se realizó ninguna operación.":"No se pudo conectar con Base Wallet: "+(e&&e.message?e.message:"error desconocido")+". Comprobá tu conexión y volvé a intentar.","warn");
   }finally{
    button.disabled=false;
-   button.textContent=walletAccount?"Billetera conectada":"Conectar con Base Wallet";
+   button.textContent="🟦 Base Wallet";
   }
  };
  const walletConnectMetaMask=async()=>{
@@ -1156,12 +1156,16 @@ creature.visible=false;scene.add(creature);arCreature=creature;arSession=await n
   walletProvider=null;
   $("walletDetails").classList.add("hidden");
   $("walletDisconnectBtn").classList.add("hidden");
-  $("walletConnectBtn").textContent="Conectar con Base Wallet";
-  $("walletMetaMaskBtn").textContent="Conectar con MetaMask";
+  $("walletConnectBtn").textContent="Elegir billetera";
+  $("walletBaseChoiceBtn").textContent="🟦 Base Wallet";
+  $("walletMetaMaskBtn").textContent="🦊 MetaMask";
+  $("walletChoicePanel").classList.add("hidden");
   walletStatus("Se ocultó la cuenta en Sendero Salvaje. Para revocar el permiso de la billetera, usá los ajustes de conexiones de tu billetera.");
  };
- $("walletConnectBtn").addEventListener("click",walletConnect);
+ $("walletConnectBtn").addEventListener("click",()=>{$("walletChoicePanel").classList.toggle("hidden");});
+ $("walletBaseChoiceBtn").addEventListener("click",walletConnect);
  $("walletMetaMaskBtn").addEventListener("click",walletConnectMetaMask);
+ $("walletCancelChoiceBtn").addEventListener("click",()=>$("walletChoicePanel").classList.add("hidden"));
  $("walletNetworkBtn").addEventListener("click",walletSwitchNetwork);
  $("walletDisconnectBtn").addEventListener("click",walletDisconnectView);
  $("walletCopyBtn").addEventListener("click",async()=>{
