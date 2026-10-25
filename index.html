@@ -320,6 +320,95 @@ button:not(:disabled):hover{box-shadow:0 7px 22px #4ad68b22!important}
 .zoneBtn span{color:#c0d6c7!important}
 .gameToast{background:#10271ff0!important;color:#f3fff5!important}
 @media(max-width:420px){main{padding-left:10px!important;padding-right:10px!important}.panel{padding:13px!important}.forestHero{min-height:390px!important}.stats{gap:7px!important}.stat{padding:10px!important}}
+
+
+/* V39 — rediseño visual evidente, sin tocar la lógica del juego */
+:root{color-scheme:dark}
+body{
+  background:
+    radial-gradient(ellipse at 50% -10%,rgba(49,214,151,.24),transparent 48%),
+    radial-gradient(ellipse at 100% 55%,rgba(38,191,190,.13),transparent 34%),
+    linear-gradient(160deg,#071a16 0%,#08110f 48%,#050b0c 100%)!important;
+  background-attachment:fixed!important
+}
+body:before{
+  content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:radial-gradient(circle at 12% 25%,#61f2b20a 0 2px,transparent 3px),
+             radial-gradient(circle at 83% 62%,#61f2b20b 0 2px,transparent 3px);
+  background-size:47px 53px,67px 71px;animation:forestParticles 24s linear infinite
+}
+@keyframes forestParticles{from{background-position:0 0,0 0}to{background-position:141px 159px,-201px 213px}}
+main{isolation:isolate}
+header,.panel,.forestHero,.notice,.quest,.craftCard,.skillCard,.achievementRow,.zoneBtn,.stat,.pill{
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)
+}
+header{
+  background:linear-gradient(125deg,#123b2d 0%,#10271f 45%,#0d2223 100%)!important;
+  border:1px solid #55e5a477!important;
+  box-shadow:0 0 0 1px #4ef0ad13,0 16px 42px #0008,0 0 32px #2ddc9810!important;
+  position:relative;overflow:hidden
+}
+header:after{
+  content:"";position:absolute;top:0;left:-70%;width:45%;height:2px;
+  background:linear-gradient(90deg,transparent,#9affcb,transparent);
+  animation:headerSweep 7s ease-in-out infinite;pointer-events:none
+}
+@keyframes headerSweep{0%,20%{left:-70%}65%,100%{left:130%}}
+header h1{letter-spacing:1.8px;text-shadow:0 0 22px #54e9a32c}
+.panel{
+  background:linear-gradient(145deg,#132c24f5,#0b1b19f5 76%,#0a1719f5)!important;
+  border:1px solid #3b806477!important;
+  box-shadow:0 12px 32px #0005,inset 0 1px #b2ffdc12!important;
+  transition:transform .28s ease,border-color .28s ease,box-shadow .28s ease!important
+}
+.panel:focus-within{border-color:#66e9aeaa!important}
+.forestHero{
+  border:1px solid #70dca488!important;
+  background:
+    radial-gradient(ellipse at 78% 14%,#b5ff8c30,transparent 29%),
+    radial-gradient(ellipse at 14% 75%,#22d3a42b,transparent 36%),
+    linear-gradient(145deg,#1b6246 0%,#174a38 35%,#103327 68%,#091a16 100%)!important;
+  box-shadow:0 0 0 1px #8df3bd16,0 20px 50px #0008,inset 0 1px #d9ffe53d!important;
+  overflow:hidden
+}
+.forestHero:after{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(115deg,transparent 20%,#d5ffe60a 48%,transparent 68%);
+  transform:translateX(-120%);animation:heroLightPass 9s ease-in-out infinite
+}
+@keyframes heroLightPass{0%,25%{transform:translateX(-120%)}65%,100%{transform:translateX(120%)}}
+.stat,.pill{
+  background:linear-gradient(135deg,#1b4435,#112b25 78%)!important;
+  border:1px solid #4b997255!important;box-shadow:inset 0 1px #d5ffe610,0 5px 16px #0002!important
+}
+.track{height:8px!important;border:1px solid #4c786455}
+.fill{background:linear-gradient(90deg,#32d89b,#b3ffb0)!important;box-shadow:0 0 14px #42e9a366!important}
+.xpfill{background:linear-gradient(90deg,#e6b94e,#fff0a6)!important;box-shadow:0 0 13px #e9c96a66!important}
+button,.zoneBtn{
+  transition:transform .2s ease,filter .2s ease,box-shadow .25s ease,border-color .25s ease!important
+}
+button:not(:disabled):hover,.zoneBtn:hover{transform:translateY(-2px);filter:brightness(1.12)}
+button:not(:disabled):active,.zoneBtn:active{transform:scale(.97)}
+button.primary,nav button.primary{
+  background:linear-gradient(115deg,#b6ffbd 0%,#58e7ad 52%,#40cfc0 100%)!important;
+  color:#062319!important;border:1px solid #c9ffd5!important;
+  box-shadow:0 5px 22px #36e8a32b,inset 0 1px #ffffffa8!important;font-weight:800!important
+}
+nav button:not(.primary){
+  background:linear-gradient(145deg,#18392d,#10231e)!important;border:1px solid #3c7657!important
+}
+.quest,.notice,.craftCard,.skillCard,.achievementRow{
+  border-color:#3c775677!important;transition:transform .22s ease,border-color .22s ease,background .22s ease!important
+}
+.quest:hover,.craftCard:hover,.skillCard:hover,.achievementRow:hover{
+  transform:translateY(-2px);border-color:#66dca0aa!important
+}
+.logo{animation:logoBreathe 5s ease-in-out infinite}
+@keyframes logoBreathe{0%,100%{box-shadow:0 0 18px #61e6a31c,inset 0 1px #ffffff20}50%{box-shadow:0 0 30px #61e6a344,inset 0 1px #ffffff38}}
+@media(prefers-reduced-motion:reduce){
+  body:before,header:after,.forestHero:after,.logo{animation:none!important}
+}
+
 </style>
 </head>
 <body>
