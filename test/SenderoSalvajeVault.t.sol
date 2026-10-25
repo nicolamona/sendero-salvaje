@@ -62,30 +62,31 @@ contract SenderoSalvajeVaultTest is Test {
         assertTrue(vault.isSolvent());
     }
 
-    function testExpeditionLossMovesToRewardReserve() public {
+    function testExpeditionLossMovesPrincipalToRewardReserve() public {
         bytes32 id = keccak256("forest-expedition-1");
         vm.prank(alice);
         vault.deposit{value: 1 ether}();
         vm.prank(alice);
         vault.startExpedition(id, 1 ether);
 
-        vault.settleExpedition(alice, id, 0.4 ether);
+        vault.settleExpedition(alice, id, SenderoSalvajeVault.ExpeditionOutcome.Loss);
 
-        assertEq(vault.availableBalance(alice), 0.4 ether);
+        assertEq(vault.availableBalance(alice), 0);
         assertEq(vault.totalExpeditionPrincipal(), 0);
-        assertEq(vault.expeditionRewardReserve(), 0.6 ether);
+        assertEq(vault.expeditionRewardReserve(), 1 ether);
         assertTrue(vault.isSolvent());
     }
 
-    function testExpeditionCannotPayMoreThanPrincipalPlusFundedReserve() public {
+    function testWinningExpeditionRequiresPreFundedRewardReserve() public {
         bytes32 id = keccak256("forest-expedition-2");
         vm.prank(alice);
         vault.deposit{value: 1 ether}();
         vm.prank(alice);
         vault.startExpedition(id, 1 ether);
 
+        vault.setExpeditionWinRewardBps(100);
         vm.expectRevert(SenderoSalvajeVault.InsufficientRewardReserve.selector);
-        vault.settleExpedition(alice, id, 1.01 ether);
+        vault.settleExpedition(alice, id, SenderoSalvajeVault.ExpeditionOutcome.Win);
     }
 
     function testPlayerCanEmergencyRefundExpeditionWhilePaused() public {
@@ -110,7 +111,7 @@ contract SenderoSalvajeVaultTest is Test {
         vault.deposit{value: 1 ether}();
         vm.prank(alice);
         vault.startExpedition(id, 1 ether);
-        vault.settleExpedition(alice, id, 1 ether);
+        vault.settleExpedition(alice, id, SenderoSalvajeVault.ExpeditionOutcome.Refund);
 
         vm.prank(alice);
         vm.expectRevert(SenderoSalvajeVault.PositionAlreadyExists.selector);
