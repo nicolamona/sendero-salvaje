@@ -788,7 +788,7 @@ video,.cameraWrap,.arCanvasWrap{border-radius:13px!important}
   <div class="walletDetail"><span class="small">Dirección conectada</span><strong id="walletAddress">—</strong><button type="button" id="walletCopyBtn" class="walletMiniBtn">Copiar dirección</button></div>
   <div class="walletDetail"><span class="small">Red detectada</span><strong id="walletNetwork">—</strong></div>
  </div>
- <div class="walletActions"><button type="button" id="walletConnectBtn" class="primary">Conectar billetera</button><button type="button" id="walletNetworkBtn">Usar Base Sepolia</button><button type="button" id="walletDisconnectBtn" class="walletMiniBtn hidden">Desconectar vista</button></div>
+ <div class="walletActions"><button type="button" id="walletConnectBtn" class="primary">Conectar con Base Wallet</button><button type="button" id="walletMetaMaskBtn">Conectar con MetaMask</button><button type="button" id="walletNetworkBtn">Usar Base Sepolia</button><button type="button" id="walletDisconnectBtn" class="walletMiniBtn hidden">Desconectar vista</button></div>
  <p class="small walletFootnote">Nunca ingreses tu frase semilla ni tu clave privada aquí. Esta versión no pide firmas, no envía fondos y no modifica tus monedas del juego.</p>
 </section>
 <section class="panel" id="exploreView">
@@ -1038,6 +1038,8 @@ creature.visible=false;scene.add(creature);arCreature=creature;arSession=await n
  let walletProvider=null;
  let walletAccount=null;
  let coinbaseSdk=null;
+ let metaMaskClient=null;
+ let activeWallet="base";
  const walletShort=a=>a?a.slice(0,6)+"…"+a.slice(-4):"";
  const walletStatus=(message,kind="")=>{const el=$("walletStatus");if(!el)return;el.textContent=message;el.dataset.kind=kind};
  const walletNetworkName=chainId=>{
@@ -1069,6 +1071,7 @@ creature.visible=false;scene.add(creature);arCreature=creature;arSession=await n
   }
  };
  const walletConnect=async()=>{
+  activeWallet="base";
   const button=$("walletConnectBtn");
   button.disabled=true;button.textContent="Abriendo Base Wallet…";
   try{
@@ -1100,6 +1103,37 @@ creature.visible=false;scene.add(creature);arCreature=creature;arSession=await n
    button.textContent=walletAccount?"Billetera conectada":"Conectar con Base Wallet";
   }
  };
+ const walletConnectMetaMask=async()=>{
+  const button=$("walletMetaMaskBtn");
+  button.disabled=true;button.textContent="Abriendo MetaMask…";
+  activeWallet="metamask";
+  try{
+   if(!metaMaskClient){
+    const sdkModule=await import("https://esm.sh/@metamask/connect-evm");
+    const createEVMClient=sdkModule.createEVMClient;
+    if(typeof createEVMClient!=="function")throw new Error("No se pudo cargar MetaMask Connect.");
+    metaMaskClient=await createEVMClient({
+     dapp:{name:"Sendero Salvaje",url:location.href,iconUrl:new URL("icon.svg",location.href).href},
+     api:{supportedNetworks:{[EXPECTED_CHAIN_ID]:"https://sepolia.base.org"}}
+    });
+   }
+   const result=await metaMaskClient.connect({chainIds:[EXPECTED_CHAIN_ID]});
+   walletProvider=metaMaskClient.getProvider();
+   const accounts=(result&&result.accounts)||await walletProvider.request({method:"eth_accounts"});
+   if(!accounts||!accounts.length)throw new Error("MetaMask no devolvió una cuenta.");
+   walletAccount=accounts[0];
+   if(walletProvider&&typeof walletProvider.on==="function"){
+    walletProvider.on("accountsChanged",()=>walletRender());
+    walletProvider.on("chainChanged",()=>walletRender());
+   }
+   await walletRender();
+  }catch(e){
+   const code=e&&e.code;
+   walletStatus(code===4001?"Conexión rechazada. No se realizó ninguna operación.":"No se pudo conectar con MetaMask: "+(e&&e.message?e.message:"error desconocido")+". Comprobá que MetaMask esté disponible y volvé a intentar.","warn");
+  }finally{
+   button.disabled=false;button.textContent=walletAccount&&activeWallet==="metamask"?"MetaMask conectada":"Conectar con MetaMask";
+  }
+ };
  const walletSwitchNetwork=async()=>{
   const provider=walletProvider||window.ethereum;
   if(!provider){walletStatus("Primero conectá Base Wallet.","warn");return}
@@ -1123,9 +1157,11 @@ creature.visible=false;scene.add(creature);arCreature=creature;arSession=await n
   $("walletDetails").classList.add("hidden");
   $("walletDisconnectBtn").classList.add("hidden");
   $("walletConnectBtn").textContent="Conectar con Base Wallet";
+  $("walletMetaMaskBtn").textContent="Conectar con MetaMask";
   walletStatus("Se ocultó la cuenta en Sendero Salvaje. Para revocar el permiso de la billetera, usá los ajustes de conexiones de tu billetera.");
  };
  $("walletConnectBtn").addEventListener("click",walletConnect);
+ $("walletMetaMaskBtn").addEventListener("click",walletConnectMetaMask);
  $("walletNetworkBtn").addEventListener("click",walletSwitchNetwork);
  $("walletDisconnectBtn").addEventListener("click",walletDisconnectView);
  $("walletCopyBtn").addEventListener("click",async()=>{
