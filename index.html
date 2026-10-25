@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#10271d">
+<meta name="theme-color" content="#0a0d18">
 <meta name="description" content="Explorá un bosque salvaje, descubrí criaturas en realidad aumentada y convertite en leyenda.">
 <meta name="color-scheme" content="dark">
 <meta property="og:title" content="Sendero Salvaje — Cazamonstruos">
@@ -407,6 +407,114 @@ nav button:not(.primary){
 @keyframes logoBreathe{0%,100%{box-shadow:0 0 18px #61e6a31c,inset 0 1px #ffffff20}50%{box-shadow:0 0 30px #61e6a344,inset 0 1px #ffffff38}}
 @media(prefers-reduced-motion:reduce){
   body:before,header:after,.forestHero:after,.logo{animation:none!important}
+}
+
+
+
+/* V40 — dirección de arte: obsidiana, índigo, cian eléctrico y ámbar */
+:root{
+ color-scheme:dark;
+ --bg:#111827;--panel:#151d30;--line:#303c56;
+ --mint:#53e3f5;--gold:#f5c66b;--text:#f4f6ff;--muted:#aab5cf;--red:#ff6b86
+}
+meta[name="theme-color"]{color:#090d18}
+body{
+ background:
+  radial-gradient(ellipse at 12% 0%,#34245c66,transparent 37%),
+  radial-gradient(ellipse at 100% 25%,#087f9a30,transparent 34%),
+  radial-gradient(ellipse at 50% 100%,#24244b30,transparent 48%),
+  linear-gradient(155deg,#0a0d18 0%,#101527 48%,#080b14 100%)!important;
+ background-attachment:fixed!important;color:#f4f6ff!important
+}
+body:before{
+ background:radial-gradient(circle at 15% 20%,#70e9ff0c 0 1px,transparent 2px),
+ radial-gradient(circle at 75% 55%,#b9a2ff12 0 1px,transparent 2px)!important;
+ background-size:43px 47px,71px 79px!important
+}
+header{
+ background:linear-gradient(130deg,#20223d 0%,#171d31 48%,#102b3a 100%)!important;
+ border:1px solid #6479a766!important;
+ box-shadow:0 18px 44px #0008,inset 0 1px #ffffff12!important
+}
+header:after{background:linear-gradient(90deg,transparent,#8cddff,#c2a6ff,transparent)!important}
+header h1{letter-spacing:2px;text-shadow:0 0 26px #83bfff24}
+.logo{
+ background:linear-gradient(145deg,#3c3970,#15526a)!important;
+ border:1px solid #9aabff66!important;
+ box-shadow:0 0 26px #5c9eff26,inset 0 1px #ffffff35!important
+}
+.panel{
+ background:linear-gradient(145deg,#1a2238f5 0%,#141b2eF5 72%,#101827f5 100%)!important;
+ border:1px solid #45516f!important;
+ box-shadow:0 16px 38px #0006,inset 0 1px #d7e6ff0c!important
+}
+.forestHero{
+ background:
+  radial-gradient(ellipse at 82% 12%,#8a78ff55,transparent 28%),
+  radial-gradient(ellipse at 12% 80%,#00d7ee2b,transparent 38%),
+  linear-gradient(145deg,#27244b 0%,#202746 37%,#132a3b 72%,#0d1728 100%)!important;
+ border:1px solid #7586bd!important;
+ box-shadow:0 0 0 1px #b5c9ff0c,0 22px 54px #0008,inset 0 1px #ffffff24!important
+}
+.forestHero:after{
+ background:linear-gradient(115deg,transparent 20%,#d5f8ff12 48%,transparent 68%)!important
+}
+.heroTopline span,.heroFooter span{
+ background:#090f20b8!important;border:1px solid #8293c355!important;
+ box-shadow:0 5px 20px #0002
+}
+.heroEyebrow{color:#8cecff!important;letter-spacing:2.5px!important}
+.heroCopy h2 em{color:#9cdbff!important;text-shadow:0 0 28px #73caff40!important}
+.stat,.pill{
+ background:linear-gradient(135deg,#252b48,#171f34 80%)!important;
+ border:1px solid #53608088!important;box-shadow:inset 0 1px #ffffff0b,0 7px 18px #0003!important
+}
+.track{background:#2b344d!important;border:1px solid #55617b55!important}
+.fill{
+ background:linear-gradient(90deg,#2bd8ef,#70aaff,#b5a0ff)!important;
+ box-shadow:0 0 14px #5dcaff55!important
+}
+.xpfill{
+ background:linear-gradient(90deg,#e5a84d,#ffe6a1)!important;
+ box-shadow:0 0 14px #f3c56b44!important
+}
+nav button{
+ background:linear-gradient(145deg,#202943,#141c2e)!important;
+ border:1px solid #485775!important;color:#e9efff!important
+}
+nav button.primary,button.primary{
+ background:linear-gradient(115deg,#8eeeff 0%,#7aa8ff 52%,#b7a1ff 100%)!important;
+ color:#0c1425!important;border:1px solid #c5f4ff!important;
+ box-shadow:0 7px 24px #6baeff30,inset 0 1px #ffffffa6!important;font-weight:800!important
+}
+button:not(:disabled):hover,.zoneBtn:hover{
+ filter:brightness(1.15);box-shadow:0 8px 24px #72c9ff22!important
+}
+.quest,.notice,.craftCard,.skillCard,.achievementRow{
+ background:linear-gradient(145deg,#1b263b,#131d30)!important;
+ border-color:#3f506d!important
+}
+.quest:hover,.craftCard:hover,.skillCard:hover,.achievementRow:hover{border-color:#71cce9!important}
+.zoneBtn{
+ background:linear-gradient(145deg,#202b44,#141e30)!important;
+ border-color:#4b5d7c!important;color:#edf3ff!important
+}
+.zoneBtn.active{
+ background:linear-gradient(120deg,#30356a,#17465b)!important;
+ border-color:#83dfff!important;
+ box-shadow:0 0 0 1px #8feaff36,0 0 24px #58cfff1c!important
+}
+.zoneBtn span{color:#c2d3ed!important}
+.gameToast{
+ background:#171f34f5!important;color:#f5f7ff!important;
+ border:1px solid #687ca0!important;box-shadow:0 12px 35px #0007!important
+}
+#enemyPanel .scene{filter:saturate(1.08) hue-rotate(18deg)}
+@media(max-width:420px){
+ main{padding-left:10px!important;padding-right:10px!important}
+ .panel{padding:13px!important}
+ .forestHero{min-height:390px!important}
+ .stats{gap:7px!important}.stat{padding:10px!important}
 }
 
 </style>
