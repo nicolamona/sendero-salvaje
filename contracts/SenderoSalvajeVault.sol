@@ -59,7 +59,10 @@ contract SenderoSalvajeVault is Ownable2Step, ReentrancyGuard, Pausable {
     uint256 public reservedStakingRewards;
     uint256 public expeditionRewardReserve;
 
-    address public settlementOperator;
+    mapping(address => bool) public settlementSigners;
+    uint8 public settlementQuorum;
+    mapping(bytes32 => mapping(address => uint8)) public expeditionSignerVote;
+    mapping(bytes32 => mapping(uint8 => uint8)) public expeditionOutcomeVotes;
     uint16 public stakingRewardBps; // New positions only. Defaults to zero.
     uint16 public expeditionWinRewardBps; // Fixed, pre-funded reward rate for winning expeditions.
 
@@ -79,7 +82,9 @@ contract SenderoSalvajeVault is Ownable2Step, ReentrancyGuard, Pausable {
     event ExpeditionWinRewardRateChanged(uint16 oldBps, uint16 newBps);
     event StakingStarted(address indexed player, uint256 indexed stakeId, uint256 principal, uint256 reward, uint64 unlockAt);
     event StakingWithdrawn(address indexed player, uint256 indexed stakeId, uint256 principal, uint256 reward);
-    event SettlementOperatorChanged(address indexed oldOperator, address indexed newOperator);
+    event SettlementSignerChanged(address indexed signer, bool enabled);
+    event SettlementQuorumChanged(uint8 oldQuorum, uint8 newQuorum);
+    event ExpeditionOutcomeApproved(address indexed player, bytes32 indexed expeditionId, ExpeditionOutcome outcome, address indexed signer, uint8 approvals);
     event EmergencyPause(address indexed by);
     event EmergencyUnpause(address indexed by);
 
@@ -91,6 +96,9 @@ contract SenderoSalvajeVault is Ownable2Step, ReentrancyGuard, Pausable {
     error PositionNotActive();
     error InvalidPayout();
     error UnauthorizedSettlementOperator();
+    error DuplicateOrConflictingVote();
+    error QuorumNotReached();
+    error InvalidQuorum();
     error InvalidDuration();
     error StakeNotMatured();
     error StakeAlreadyWithdrawn();
@@ -101,7 +109,8 @@ contract SenderoSalvajeVault is Ownable2Step, ReentrancyGuard, Pausable {
 
     constructor(address initialOwner) Ownable(initialOwner) {
         if (initialOwner == address(0)) revert InvalidRecipient();
-        settlementOperator = initialOwner;
+        settlementSigners[initialOwner] = true;
+        settlementQuorum = 2;
     }
 
     /// @notice Deposit native ETH; credited only to msg.sender.
@@ -158,14 +167,31 @@ contract SenderoSalvajeVault is Ownable2Step, ReentrancyGuard, Pausable {
         _assertSolvent();
     }
 
-    /// @notice Settle with a fixed outcome; payout amounts are derived by the contract, never supplied by the operator.
-    /// @dev The operator still attests the outcome in this draft. Mainnet remains blocked until that authority
-    ///      is replaced by reviewed quorum/proof-based verification. Win rewards must be pre-funded.
+    /// @notice Independent configured signers approve the same result before it can be settled.
+    /// @dev This on-chain quorum reduces single-key risk, but signer governance still requires independent review.
+    function approveExpeditionOutcome(address player, bytes32 expeditionId, ExpeditionOutcome outcome)
+        external
+        whenNotPaused
+    {
+        if (!settlementSigners[msg.sender]) revert UnauthorizedSettlementOperator();
+        ExpeditionPosition storage position = expeditionPositions[player][expeditionId];
+        if (!position.exists || position.settled) revert PositionNotActive();
+        bytes32 key = keccak256(abi.encode(player, expeditionId));
+        uint8 vote = uint8(outcome) + 1;
+        if (expeditionSignerVote[key][msg.sender] != 0) revert DuplicateOrConflictingVote();
+        expeditionSignerVote[key][msg.sender] = vote;
+        uint8 approvals = ++expeditionOutcomeVotes[key][vote];
+        emit ExpeditionOutcomeApproved(player, expeditionId, outcome, msg.sender, approvals);
+    }
+
+    /// @notice Settle only after the configured quorum approved the exact same outcome.
     function settleExpedition(address player, bytes32 expeditionId, ExpeditionOutcome outcome)
         external
         whenNotPaused
     {
-        if (msg.sender != settlementOperator) revert UnauthorizedSettlementOperator();
+        bytes32 key = keccak256(abi.encode(player, expeditionId));
+        uint8 vote = uint8(outcome) + 1;
+        if (expeditionOutcomeVotes[key][vote] < settlementQuorum) revert QuorumNotReached();
         ExpeditionPosition storage position = expeditionPositions[player][expeditionId];
         if (!position.exists || position.settled) revert PositionNotActive();
 
@@ -291,11 +317,37 @@ contract SenderoSalvajeVault is Ownable2Step, ReentrancyGuard, Pausable {
         _assertSolvent();
     }
 
-    function setSettlementOperator(address newOperator) external onlyOwner {
-        if (newOperator == address(0)) revert InvalidRecipient();
-        address old = settlementOperator;
-        settlementOperator = newOperator;
-        emit SettlementOperatorChanged(old, newOperator);
+    /// @notice Configure a settlement signer. Quorum must remain achievable after changes.
+    function setSettlementSigner(address signer, bool enabled) external onlyOwner {
+        if (signer == address(0)) revert InvalidRecipient();
+        if (!enabled && settlementSigners[signer] && settlementQuorum > 1) {
+            // Count enabled signers to prevent silently configuring an impossible quorum.
+            uint256 count = 0;
+            // The owner-managed signer set is intentionally capped to keep this count bounded.
+            for (uint256 i = 0; i < _settlementSignerList.length; i++) {
+                if (settlementSigners[_settlementSignerList[i]] && _settlementSignerList[i] != signer) count++;
+            }
+            if (count < settlementQuorum) revert InvalidQuorum();
+        }
+        if (enabled && !settlementSigners[signer]) {
+            if (_settlementSignerList.length >= 16) revert InvalidQuorum();
+            _settlementSignerList.push(signer);
+        }
+        settlementSigners[signer] = enabled;
+        emit SettlementSignerChanged(signer, enabled);
+    }
+
+    address[] private _settlementSignerList;
+
+    function setSettlementQuorum(uint8 newQuorum) external onlyOwner {
+        uint256 count = 0;
+        for (uint256 i = 0; i < _settlementSignerList.length; i++) {
+            if (settlementSigners[_settlementSignerList[i]]) count++;
+        }
+        if (newQuorum < 2 || newQuorum > count) revert InvalidQuorum();
+        uint8 old = settlementQuorum;
+        settlementQuorum = newQuorum;
+        emit SettlementQuorumChanged(old, newQuorum);
     }
 
     /// @notice Emergency stop for deposits, new investments, funding and settlements.
