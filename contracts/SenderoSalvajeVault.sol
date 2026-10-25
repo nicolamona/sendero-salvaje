@@ -68,7 +68,8 @@ contract SenderoSalvajeVault is Ownable2Step, ReentrancyGuard, Pausable {
     event Withdrawn(address indexed player, address indexed recipient, uint256 amount);
     event ExpeditionFunded(address indexed funder, uint256 amount, uint256 newReserve);
     event ExpeditionStarted(address indexed player, bytes32 indexed expeditionId, uint256 stake);
-    event ExpeditionSettled(address indexed player, bytes32 indexed expeditionId, uint256 stake, uint256 payout, address indexed operator);\n    event ExpeditionLossRecycled(address indexed player, bytes32 indexed expeditionId, uint256 amount, uint256 newReserve);
+    event ExpeditionSettled(address indexed player, bytes32 indexed expeditionId, uint256 stake, uint256 payout, address indexed operator);
+    event ExpeditionLossRecycled(address indexed player, bytes32 indexed expeditionId, uint256 amount, uint256 newReserve);\n    event ExpeditionLossRecycled(address indexed player, bytes32 indexed expeditionId, uint256 amount, uint256 newReserve);
     event StakingRewardsFunded(address indexed funder, uint256 amount, uint256 newReserve);
     event StakingRewardRateChanged(uint16 oldBps, uint16 newBps);
     event StakingStarted(address indexed player, uint256 indexed stakeId, uint256 principal, uint256 reward, uint64 unlockAt);
@@ -168,6 +169,12 @@ contract SenderoSalvajeVault is Ownable2Step, ReentrancyGuard, Pausable {
             uint256 reward = payout - principal;
             if (reward > expeditionRewardReserve) revert InsufficientRewardReserve();
             expeditionRewardReserve -= reward;
+        } else if (payout < principal) {
+            // Recycle the unreturned stake into the separately accounted expedition pool.
+            // This makes losses auditable and available to fund future expedition payouts.
+            uint256 loss = principal - payout;
+            expeditionRewardReserve += loss;
+            emit ExpeditionLossRecycled(player, expeditionId, loss, expeditionRewardReserve);
         }
 
         position.settled = true;
