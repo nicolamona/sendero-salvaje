@@ -110,6 +110,7 @@ contract SenderoSalvajeVault is Ownable2Step, ReentrancyGuard, Pausable {
     constructor(address initialOwner) Ownable(initialOwner) {
         if (initialOwner == address(0)) revert InvalidRecipient();
         settlementSigners[initialOwner] = true;
+        _settlementSignerList.push(initialOwner);
         settlementQuorum = 2;
     }
 
