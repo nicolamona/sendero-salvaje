@@ -1,0 +1,42 @@
+name: Contract draft tests
+
+on:
+  pull_request:
+    paths:
+      - "contracts/**"
+      - "test/**"
+      - "script/**"
+      - "foundry.toml"
+      - ".github/workflows/contract-tests.yml"
+  push:
+    branches:
+      - "feature/base-mainnet-investments"
+    paths:
+      - "contracts/**"
+      - "test/**"
+      - "foundry.toml"
+      - ".github/workflows/contract-tests.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Foundry
+        uses: foundry-rs/foundry-toolchain@v1
+        with:
+          version: stable
+
+      - name: Install pinned OpenZeppelin Contracts
+        run: forge install OpenZeppelin/openzeppelin-contracts@v5.4.0 --no-commit
+
+      - name: Install pinned forge-std
+        run: forge install foundry-rs/forge-std@v1.9.7 --no-commit
+
+      - name: Run tests
+        run: forge test -vvv
