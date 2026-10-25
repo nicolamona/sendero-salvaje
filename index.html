@@ -144,6 +144,58 @@ button:active{transform:translateY(2px);box-shadow:0 1px 0 #09140f!important}
 @keyframes creatureFloat{0%,100%{transform:translateY(0) rotate(-1deg)}50%{transform:translateY(-8px) rotate(1deg)}}
 @media(max-width:390px){.enemy{min-height:160px}.enemy svg{height:175px}header{padding:14px!important}.stat{padding:10px!important}}
 
+
+/* V15 — nueva composición de aventura, no solo retoques de color */
+body{background:#07100e!important;background-image:radial-gradient(ellipse at 50% 0%,#244c35 0,transparent 38%),linear-gradient(180deg,#0a1714,#050b0d 78%)!important}
+main{max-width:720px!important;padding:10px 12px calc(30px + env(safe-area-inset-bottom))!important;gap:13px!important}
+header{padding:17px!important;border-radius:23px 23px 16px 16px!important;background:linear-gradient(125deg,#19352a,#10221f 65%,#172a23)!important;border:1px solid #42654c!important}
+.brand{align-items:center}.logo{width:54px!important;height:54px!important;border-radius:18px!important;font-size:27px!important}
+header .stats{grid-template-columns:1fr 1fr!important;gap:9px!important;margin-top:16px!important}
+header .stat{padding:11px 12px!important;border-radius:13px!important;background:#0b1b18!important;border:1px solid #355344!important}
+header .stat strong{font-size:20px!important;margin:5px 0 8px!important}
+header .pills{gap:7px!important;margin-top:9px!important}
+header .pill{font-size:12px!important;padding:9px 3px!important;background:#243d30!important;border-color:#43664b!important}
+nav{position:sticky!important;top:4px;z-index:20!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;padding:5px!important;border-radius:16px!important;background:#091512f2!important;border:1px solid #345141!important;backdrop-filter:blur(16px)}
+nav button{font-size:13px!important;padding:10px 4px!important;min-height:44px!important}
+.panel{padding:15px!important;border-radius:18px!important;background:linear-gradient(155deg,#13251f,#0d1918)!important;border-color:#2c4939!important}
+#exploreView>h2{font-size:12px!important;letter-spacing:2.5px!important;text-transform:uppercase!important;color:#a6c7a9!important;margin:2px 0 12px!important}
+.forestHero{position:relative!important;isolation:isolate!important;min-height:405px!important;display:flex!important;flex-direction:column!important;justify-content:space-between!important;text-align:left!important;overflow:hidden!important;padding:15px!important;border-radius:19px!important;border:1px solid #41634a!important;background:linear-gradient(180deg,#1b3c32 0%,#254b3c 35%,#142b24 70%,#0b1916 100%)!important;box-shadow:inset 0 1px #d7ffe21c,0 16px 30px #0004!important}
+.forestHero:before{content:"";position:absolute;z-index:-1;inset:0;background:radial-gradient(ellipse at 70% 22%,#d6e9a733,transparent 19%),linear-gradient(180deg,transparent 45%,#06100ee8 94%)!important}
+.forestHero .sceneEmoji{display:none!important}
+.heroTopline,.heroFooter{display:flex;justify-content:space-between;gap:8px;align-items:center;font-size:9px;font-weight:900;letter-spacing:1.6px;color:#d0e6ca}
+.heroTopline span,.heroFooter span{padding:7px 9px;border:1px solid #9fc5a24a;background:#0a1a14a8;border-radius:99px}
+.heroTopline b{color:#f1d18b}
+.forestArtwork{position:absolute;z-index:-1;inset:0;overflow:hidden}
+.moon{position:absolute;top:53px;right:47px;width:65px;height:65px;border-radius:50%;background:#e8e8b6;box-shadow:0 0 30px #e8e8b655,0 0 95px #c7e5a522}
+.mountain{position:absolute;bottom:73px;width:120%;height:190px;left:-10%;clip-path:polygon(0 100%,0 72%,16% 40%,26% 64%,43% 18%,55% 57%,70% 30%,85% 66%,100% 43%,100% 100%);background:#16382d}
+.mountainBack{bottom:93px;background:#41634b;opacity:.72;transform:scale(1.12)}
+.mountainFront{background:#0b211a;bottom:52px;transform:scale(1.25)}
+.pine{position:absolute;bottom:52px;width:0;height:0;border-left:55px solid transparent;border-right:55px solid transparent;border-bottom:190px solid #0a2119;filter:drop-shadow(0 0 1px #7aa17a55)}
+.pine:after{content:"";position:absolute;top:65px;left:-38px;width:0;height:0;border-left:38px solid transparent;border-right:38px solid transparent;border-bottom:130px solid #0d2b20}
+.pineOne{left:-18px;transform:scale(1.12);transform-origin:bottom}
+.pineTwo{right:-27px;bottom:43px;transform:scale(1.45);transform-origin:bottom;border-bottom-color:#081a14}
+.pineThree{right:29%;bottom:49px;transform:scale(.72);transform-origin:bottom;border-bottom-color:#17402c}
+.forestMist{position:absolute;bottom:80px;left:-20%;width:140%;height:52px;background:#b9d8ad18;filter:blur(13px);border-radius:50%}
+.trail{position:absolute;bottom:-24px;left:35%;width:35%;height:140px;clip-path:polygon(43% 0,57% 0,100% 100%,0 100%);background:linear-gradient(180deg,#d5c18a20,#d5c18a05)}
+.heroCopy{position:relative;z-index:2;margin-top:auto;padding:0 5px 22px}
+.heroEyebrow{font-size:9px;font-weight:900;letter-spacing:2.1px;color:#bde6b5}
+.heroCopy h2{font-size:clamp(30px,8vw,43px)!important;line-height:1.02!important;letter-spacing:-1.4px!important;margin:11px 0!important;color:#f5f5df!important;text-shadow:0 4px 20px #0005}
+.heroCopy h2 em{font-style:normal;color:#b7e6a8}
+.heroCopy p{font-size:13px!important;line-height:1.55!important;max-width:270px;margin:0!important;color:#d0e0cf!important}
+.heroFooter{font-size:8px;color:#a9c7ad}
+#exploreView>.actions{grid-template-columns:1fr 1fr!important;gap:9px!important;margin-top:12px!important}
+#exploreView>.actions button{min-height:58px!important;text-align:left!important;padding:11px 12px!important;font-size:13px!important;line-height:1.25!important}
+#searchBtn{grid-column:1/-1!important;min-height:62px!important;font-size:16px!important;text-align:center!important;letter-spacing:.2px}
+#gpsInfo{font-size:12px!important;line-height:1.6!important;margin-top:10px!important}
+.quest{margin-top:12px!important;padding:14px!important;border-radius:15px!important}
+.quest strong{font-size:14px!important}
+#exploreNote{padding:7px 3px;font-size:12px!important}
+#fightView>h2,#bagView>h2{font-size:12px!important;text-transform:uppercase!important;letter-spacing:2px!important;color:#a6c7a9!important}
+#enemyPanel .scene{min-height:300px!important;display:flex;flex-direction:column;justify-content:center}
+#enemyPanel .enemy svg{width:min(80vw,310px)!important;height:235px!important}
+@media(min-width:600px){.forestHero{min-height:450px!important}.heroCopy h2{font-size:48px!important}#exploreView>.actions button{min-height:64px!important}}
+@media(max-width:380px){.forestHero{min-height:365px!important}.moon{right:29px;width:52px;height:52px}.heroCopy h2{font-size:30px!important}.heroFooter{font-size:7px;letter-spacing:1px}}
+
 </style>
 </head>
 <body>
@@ -161,7 +213,7 @@ button:active{transform:translateY(2px);box-shadow:0 1px 0 #09140f!important}
 </nav>
 <section class="panel" id="exploreView">
  <h2>Exploración</h2>
- <div class="scene"><div class="sceneEmoji">🌲🌌🌲</div><h2>El bosque encantado</h2><p>Explorá para encontrar criaturas y conseguir recompensas.</p></div>
+ <div class="scene forestHero"><div class="heroTopline"><span>✦ ZONA SALVAJE</span><span>RANGO <b>01</b></span></div><div class="forestArtwork" aria-hidden="true"><span class="moon"></span><span class="mountain mountainBack"></span><span class="mountain mountainFront"></span><span class="pine pineOne"></span><span class="pine pineTwo"></span><span class="pine pineThree"></span><span class="forestMist"></span><span class="trail"></span></div><div class="heroCopy"><span class="heroEyebrow">TU AVENTURA COMIENZA AQUÍ</span><h2>El bosque<br><em>te está esperando.</em></h2><p>Rastreá criaturas, ganá experiencia y convertite en leyenda.</p></div><div class="heroFooter"><span>⌖ EXPLORACIÓN ACTIVA</span><span>☾ BOSQUE ANTIGUO</span></div></div>
  <div class="actions" style="margin-top:12px"><button class="primary" id="searchBtn">🔎 Rastrear criatura</button><button id="gpsBtn">📍 Activar GPS</button><button id="arBtn">🥽 AR espacial</button><button id="cameraBtn">📷 Cámara clásica</button></div>
  <div id="gpsInfo" class="notice" style="margin-top:10px">GPS apagado. Podés jugar sin compartir tu ubicación; activarlo permite registrar tu zona de exploración en este dispositivo.</div><div class="quest"><strong>🧭 Contrato del explorador</strong><span id="questText" class="small">Derrotá 3 criaturas para cobrar una recompensa.</span><progress id="questProgress" max="3" value="0"></progress></div><div id="arPanel" class="hidden" style="margin-top:12px"><div class="arCanvasWrap" id="arCanvasWrap"><div class="arHud"><span id="arStatus">Buscando una superficie…</span><span>AR espacial</span></div></div><p class="small">Mové lentamente el teléfono para detectar una superficie. Tocá la pantalla para colocar la criatura; la cámara AR se procesa en el dispositivo.</p><div class="actions"><button class="primary" id="arFightBtn" disabled>⚔️ Combatir criatura</button><button id="arCloseBtn">Salir de AR</button></div></div>
  <div id="cameraPanel" class="hidden" style="margin-top:12px">
