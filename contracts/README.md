@@ -30,7 +30,7 @@ The contract maintains these independent categories:
 - A player calls `deposit()` with native ETH. Only `msg.sender` is credited.
 - Direct transfers through `receive()` are rejected to avoid untracked deposits; users must call `deposit()`.
 - `withdraw(amount, recipient)` can only spend the caller's available balance. It uses checks-effects-interactions and `ReentrancyGuard`.
-- A pause blocks new deposits, new investments, funding and expedition settlement. It intentionally does not block available-balance withdrawals or matured staking withdrawals.
+- A pause blocks new deposits, new investments, funding and normal expedition settlement. It intentionally does not block available-balance withdrawals or matured staking withdrawals. During a pause, players can call `emergencyRefundExpedition(expeditionId)` to recover principal from an unsettled expedition without relying on the settlement operator.
 - Deposits are not ERC-20 transfers; this contract accepts native ETH on Base Mainnet.
 
 ## Expeditions
@@ -73,7 +73,7 @@ The backend does not need the player's private key and must never ask for seed p
 Do not deploy with real funds until all of these are complete:
 
 - Compile against a pinned Solidity compiler and pinned OpenZeppelin Contracts 5.x release.
-- Unit tests for deposit/withdraw, failed transfers, reentrancy, pauses, accounting invariants, stake maturity, reward-reserve exhaustion, expedition settlement and duplicate IDs.
+- Unit tests for deposit/withdraw, failed transfers, reentrancy, pauses, emergency expedition refunds, accounting invariants, stake maturity, reward-reserve exhaustion, expedition settlement and duplicate IDs.
 - Fuzz/invariant tests proving contract ETH balance never falls below accounted liabilities.
 - Test with multiple wallets and mobile wallet connection flows.
 - Independent review of the expedition settlement trust model and reward economics.
