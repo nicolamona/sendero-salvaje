@@ -1,0 +1,17 @@
+name = "sendero-salvaje-deposit-verifier-testnet"
+main = "src/index.ts"
+compatibility_date = "2026-10-25"
+workers_dev = true
+
+# TESTNET ONLY template. Do not reuse this deployment for mainnet funds.
+# Replace database_id after creating a dedicated D1 database.
+# Set BASE_RPC_URL, VAULT_ADDRESS and GAME_ORIGIN only after deploying the test vault.
+
+[[d1_databases]]
+binding = "DB"
+database_name = "sendero-salvaje-deposit-verifier-testnet"
+database_id = "REPLACE_WITH_REAL_D1_DATABASE_ID"
+
+[vars]
+CHAIN_ID = "84532"
+MIN_CONFIRMATIONS = "5"
