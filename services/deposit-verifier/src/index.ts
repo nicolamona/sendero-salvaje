@@ -6,9 +6,9 @@ interface Env {
   VAULT_ADDRESS?: string;
   GAME_ORIGIN?: string;
   MIN_CONFIRMATIONS?: string;
+  CHAIN_ID?: string;
 }
 
-const CHAIN_ID = "0x2105"; // Base Mainnet, 8453
 const VAULT_ABI = [
   "event Deposited(address indexed player, uint256 amount, uint256 newAvailableBalance)",
   "function deposit() payable"
@@ -124,8 +124,13 @@ export default {
     }
 
     try {
+      const configuredChainId = Number(env.CHAIN_ID ?? "8453");
+      if (!Number.isSafeInteger(configuredChainId) || ![8453, 84532].includes(configuredChainId)) {
+        return json({ ok: false, error: "INVALID_SERVER_CONFIGURATION" }, 503, corsOrigin);
+      }
+      const expectedChainId = "0x" + configuredChainId.toString(16);
       const chainId = await rpc<string>(env, "eth_chainId", []);
-      if (chainId.toLowerCase() !== CHAIN_ID) {
+      if (chainId.toLowerCase() !== expectedChainId) {
         return json({ ok: false, error: "WRONG_CHAIN" }, 503, corsOrigin);
       }
 
@@ -209,7 +214,7 @@ export default {
       const now = new Date().toISOString();
       const existing = await env.DB.prepare(
         "SELECT block_hash, player, amount_wei, status FROM verified_deposits WHERE chain_id = ? AND tx_hash = ? AND log_index = ?"
-      ).bind(8453, txHash, logIndex).first<{ block_hash: string; player: string; amount_wei: string; status: string }>();
+      ).bind(configuredChainId, txHash, logIndex).first<{ block_hash: string; player: string; amount_wei: string; status: string }>();
 
       if (existing && existing.block_hash === receiptBlockHash && existing.status === "finalized") {
         if (existing.player.toLowerCase() !== wallet.toLowerCase() || existing.amount_wei !== item.amount.toString()) {
@@ -236,7 +241,7 @@ export default {
           confirmations = excluded.confirmations,
           updated_at = excluded.updated_at
       `).bind(
-        8453, txHash, logIndex, blockNumber.toString(), receiptBlockHash,
+        configuredChainId, txHash, logIndex, blockNumber.toString(), receiptBlockHash,
         wallet.toLowerCase(), item.amount.toString(), confirmations, now, now
       ).run();
 
