@@ -249,6 +249,7 @@ nav button{font-size:13px!important;padding:10px 4px!important;min-height:44px!i
 #enemyEmoji.monsterReady:active{transform:scale(.94);filter:drop-shadow(0 0 24px #ff4e3f99) brightness(1.18)}
 #enemyEmoji.monsterReady:after{content:"TOCÁ PARA ATACAR";display:block;margin-top:-3px;font-size:10px;font-weight:900;letter-spacing:2px;color:#ffb7a8;text-shadow:0 2px 8px #000;opacity:.9}
 #enemyEmoji:focus-visible{outline:2px solid #ffb7a8;outline-offset:4px;border-radius:14px}
+ .installPanel{margin-top:2px;text-align:center;background:linear-gradient(145deg,#172c25,#0e1b19)!important;border:1px solid #42654c!important}.installPanel h2{margin:0 0 6px;font-size:17px}.installBtn{width:100%;margin-top:10px;min-height:48px;font-size:14px;letter-spacing:.25px}.installInfo{margin:7px 2px 0!important;font-size:12px!important;line-height:1.5}
 </style>
 </head>
 <body>
@@ -259,7 +260,7 @@ nav button{font-size:13px!important;padding:10px 4px!important;min-height:44px!i
   <div class="stat"><span class="small">❤️ Salud</span><strong id="hpText">100/100</strong><div class="track"><div id="hpFill" class="fill"></div></div></div>
   <div class="stat"><span class="small">✨ Experiencia</span><strong id="xpText">0/100 XP</strong><div class="track"><div id="xpFill" class="fill xpfill"></div></div></div>
  </div>
- <div class="pills"><div class="pill">🪙 <b id="goldText">0</b> monedas</div><div class="pill">🧪 <b id="potionsText">2</b> pociones</div><div class="pill">Nivel <b id="levelText">1</b></div></div><button id="installBtn" class="installBtn">📲 Instalar Sendero Salvaje</button><p id="installInfo" class="small installInfo">También podés instalarlo desde el menú del navegador.</p>
+ <div class="pills"><div class="pill">🪙 <b id="goldText">0</b> monedas</div><div class="pill">🧪 <b id="potionsText">2</b> pociones</div><div class="pill">Nivel <b id="levelText">1</b></div></div>
 </header>
 <nav>
  <button id="tabExplore" class="primary">🌲 Explorar</button><button id="tabFight">⚔️ Combate</button><button id="tabBag">🎒 Mochila</button>
@@ -300,6 +301,7 @@ nav button{font-size:13px!important;padding:10px 4px!important;min-height:44px!i
  <button id="resetBtn" style="width:100%;margin-top:16px">Reiniciar aventura</button>
 </section>
 <div id="gameToast" class="gameToast" role="status" aria-live="polite"></div><div class="notice"><b>🚶 Seguridad primero.</b> Activá la AR solo detenido y en un lugar despejado. No cruces calles ni camines mirando el teléfono. GPS y cámara piden permiso; la ubicación no se envía a ningún servidor. La AR espacial requiere Android compatible con ARCore y un navegador compatible con WebXR.</div>
+<section class="panel installPanel" aria-labelledby="installHeading"><h2 id="installHeading">📲 Llevá Sendero Salvaje con vos</h2><p>Instalá el juego en tu pantalla de inicio para abrirlo más rápido.</p><button id="installBtn" class="installBtn">📲 Instalar Sendero Salvaje</button><p id="installInfo" class="small installInfo">También podés instalarlo desde el menú del navegador.</p></section>
 </main>
 <script>
 const $=id=>document.getElementById(id);
