@@ -31,6 +31,8 @@ contract SenderoSalvajeVault is Ownable2Step, ReentrancyGuard, Pausable {
     uint256 public constant MAX_STAKING_DURATION = 365 days;
     uint16 public constant MAX_STAKING_REWARD_BPS = 2_000; // 20% APR ceiling, not a promise.
 
+    enum ExpeditionOutcome { Loss, Refund, Win }
+
     struct ExpeditionPosition {
         uint128 principal;
         uint64 startedAt;
@@ -59,6 +61,7 @@ contract SenderoSalvajeVault is Ownable2Step, ReentrancyGuard, Pausable {
 
     address public settlementOperator;
     uint16 public stakingRewardBps; // New positions only. Defaults to zero.
+    uint16 public expeditionWinRewardBps; // Fixed, pre-funded reward rate for winning expeditions.
 
     mapping(address => mapping(bytes32 => ExpeditionPosition)) public expeditionPositions;
     mapping(address => uint256) public nextStakeId;
@@ -73,6 +76,7 @@ contract SenderoSalvajeVault is Ownable2Step, ReentrancyGuard, Pausable {
     event ExpeditionEmergencyRefunded(address indexed player, bytes32 indexed expeditionId, uint256 principal);
     event StakingRewardsFunded(address indexed funder, uint256 amount, uint256 newReserve);
     event StakingRewardRateChanged(uint16 oldBps, uint16 newBps);
+    event ExpeditionWinRewardRateChanged(uint16 oldBps, uint16 newBps);
     event StakingStarted(address indexed player, uint256 indexed stakeId, uint256 principal, uint256 reward, uint64 unlockAt);
     event StakingWithdrawn(address indexed player, uint256 indexed stakeId, uint256 principal, uint256 reward);
     event SettlementOperatorChanged(address indexed oldOperator, address indexed newOperator);
@@ -154,10 +158,10 @@ contract SenderoSalvajeVault is Ownable2Step, ReentrancyGuard, Pausable {
         _assertSolvent();
     }
 
-    /// @notice Settle an expedition. Payout is at most principal plus funded expedition rewards.
-    /// @dev TRUST ASSUMPTION: operator determines the result in this draft. Use a multisig,
-    ///      delay and independently reviewed result-verification mechanism before mainnet use.
-    function settleExpedition(address player, bytes32 expeditionId, uint256 payout)
+    /// @notice Settle with a fixed outcome; payout amounts are derived by the contract, never supplied by the operator.
+    /// @dev The operator still attests the outcome in this draft. Mainnet remains blocked until that authority
+    ///      is replaced by reviewed quorum/proof-based verification. Win rewards must be pre-funded.
+    function settleExpedition(address player, bytes32 expeditionId, ExpeditionOutcome outcome)
         external
         whenNotPaused
     {
@@ -166,16 +170,20 @@ contract SenderoSalvajeVault is Ownable2Step, ReentrancyGuard, Pausable {
         if (!position.exists || position.settled) revert PositionNotActive();
 
         uint256 principal = position.principal;
-        if (payout > principal) {
-            uint256 reward = payout - principal;
+        uint256 payout;
+        if (outcome == ExpeditionOutcome.Loss) {
+            // A loss forfeits principal into the separate expedition reward reserve.
+            expeditionRewardReserve += principal;
+            emit ExpeditionLossRecycled(player, expeditionId, principal, expeditionRewardReserve);
+        } else if (outcome == ExpeditionOutcome.Refund) {
+            payout = principal;
+        } else if (outcome == ExpeditionOutcome.Win) {
+            uint256 reward = (principal * uint256(expeditionWinRewardBps)) / BPS_DENOMINATOR;
             if (reward > expeditionRewardReserve) revert InsufficientRewardReserve();
             expeditionRewardReserve -= reward;
-        } else if (payout < principal) {
-            // Recycle the unreturned stake into the separately accounted expedition pool.
-            // This makes losses auditable and available to fund future expedition payouts.
-            uint256 loss = principal - payout;
-            expeditionRewardReserve += loss;
-            emit ExpeditionLossRecycled(player, expeditionId, loss, expeditionRewardReserve);
+            payout = principal + reward;
+        } else {
+            revert InvalidPayout();
         }
 
         position.settled = true;
@@ -209,6 +217,15 @@ contract SenderoSalvajeVault is Ownable2Step, ReentrancyGuard, Pausable {
         stakingRewardReserve += msg.value;
         emit StakingRewardsFunded(msg.sender, msg.value, stakingRewardReserve);
         _assertSolvent();
+    }
+
+    /// @notice Configure a fixed reward percentage for future winning expeditions.
+    /// @dev This does not verify game outcomes; settlement authority still requires redesign before mainnet.
+    function setExpeditionWinRewardBps(uint16 newBps) external onlyOwner whenNotPaused {
+        if (newBps > MAX_STAKING_REWARD_BPS) revert RewardRateTooHigh();
+        uint16 old = expeditionWinRewardBps;
+        expeditionWinRewardBps = newBps;
+        emit ExpeditionWinRewardRateChanged(old, newBps);
     }
 
     /// @notice Set rate for future stakes only; rate is snapshotted into each stake's reward.
