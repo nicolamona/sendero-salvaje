@@ -1,6 +1,6 @@
 -- Audit/index only. Never use this table as an independent spendable balance ledger.
 CREATE TABLE IF NOT EXISTS verified_deposits (
-  chain_id INTEGER NOT NULL CHECK (chain_id = 8453),
+  chain_id INTEGER NOT NULL CHECK (chain_id IN (8453, 84532)),
   tx_hash TEXT NOT NULL CHECK (length(tx_hash) = 66),
   log_index INTEGER NOT NULL CHECK (log_index >= 0),
   block_number TEXT NOT NULL,
