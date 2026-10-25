@@ -1,19 +1,17 @@
-name = "sendero-salvaje-deposit-verifier"
+name = "sendero-salvaje-deposit-verifier-testnet"
 main = "src/index.ts"
 compatibility_date = "2026-10-25"
 workers_dev = true
 
-# Before deployment:
-# 1) Create a dedicated D1 database and replace the placeholder database_id.
-# 2) Apply migrations/0001_verified_deposits.sql to that database.
-# 3) Set BASE_RPC_URL, VAULT_ADDRESS (only after contract deployment/review),
-#    and GAME_ORIGIN as Worker secrets/variables.
-# This template intentionally cannot be deployed successfully until configured.
+# TESTNET ONLY template. Do not reuse this deployment for mainnet funds.
+# Replace database_id after creating a dedicated D1 database.
+# Set BASE_RPC_URL, VAULT_ADDRESS and GAME_ORIGIN only after deploying the test vault.
 
 [[d1_databases]]
 binding = "DB"
-database_name = "sendero-salvaje-deposit-verifier"
+database_name = "sendero-salvaje-deposit-verifier-testnet"
 database_id = "REPLACE_WITH_REAL_D1_DATABASE_ID"
 
 [vars]
-MIN_CONFIRMATIONS = "20"
+CHAIN_ID = "84532"
+MIN_CONFIRMATIONS = "5"
