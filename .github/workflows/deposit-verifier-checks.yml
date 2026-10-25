@@ -1,7 +1,7 @@
 name: Deposit verifier checks
 on:
   pull_request:
-    paths: ["services/deposit-verifier/**", ".github/workflows/deposit-verifier-checks.yml"]
+    paths: ["services/deposit-verifier/**"]
   push:
     branches: ["feature/deposit-verifier-worker"]
 jobs:
