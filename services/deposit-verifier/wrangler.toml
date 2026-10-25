@@ -1,0 +1,19 @@
+name = "sendero-salvaje-deposit-verifier"
+main = "src/index.ts"
+compatibility_date = "2026-10-25"
+workers_dev = true
+
+# Before deployment:
+# 1) Create a dedicated D1 database and replace the placeholder database_id.
+# 2) Apply migrations/0001_verified_deposits.sql to that database.
+# 3) Set BASE_RPC_URL, VAULT_ADDRESS (only after contract deployment/review),
+#    and GAME_ORIGIN as Worker secrets/variables.
+# This template intentionally cannot be deployed successfully until configured.
+
+[[d1_databases]]
+binding = "DB"
+database_name = "sendero-salvaje-deposit-verifier"
+database_id = "REPLACE_WITH_REAL_D1_DATABASE_ID"
+
+[vars]
+MIN_CONFIRMATIONS = "20"
