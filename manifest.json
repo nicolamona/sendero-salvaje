@@ -1,0 +1,11 @@
+{
+  "name": "Sendero Salvaje — Cazamonstruos",
+  "short_name": "Sendero Salvaje",
+  "description": "Aventura móvil de exploración y combate por turnos.",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#0b141b",
+  "theme_color": "#101b25",
+  "lang": "es",
+  "icons": []
+}
