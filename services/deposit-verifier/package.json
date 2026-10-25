@@ -1,1 +1,20 @@
-{"name":"sendero-salvaje-deposit-verifier","private":true,"version":"0.1.0","type":"module","scripts":{"dev":"wrangler dev","deploy":"wrangler deploy","typecheck":"tsc --noEmit"},"dependencies":{"ethers":"6.15.0"},"devDependencies":{"@cloudflare/workers-types":"5.20261024.1","typescript":"5.9.3","wrangler":"4.152.0"}}
+{
+  "name": "sendero-salvaje-deposit-verifier",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "typecheck": "tsc --noEmit",
+    "test": "node --experimental-strip-types --test test/*.test.mjs"
+  },
+  "dependencies": {
+    "ethers": "6.15.0"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "5.20261024.1",
+    "typescript": "5.9.3",
+    "wrangler": "4.152.0"
+  }
+}
