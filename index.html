@@ -517,6 +517,210 @@ button:not(:disabled):hover,.zoneBtn:hover{
  .stats{gap:7px!important}.stat{padding:10px!important}
 }
 
+
+/* V41 — rediseño editorial: noche mineral, niebla y cobre. Solo presentación visual. */
+:root{
+ --bg:#17191b;--panel:#1d2022;--line:#393a38;
+ --mint:#d4b18a;--gold:#e6bd83;--text:#f1eee8;--muted:#b5b0a6;--red:#e58b80;
+ color-scheme:dark
+}
+html{background:#101112}
+body{
+ color:#f1eee8!important;
+ background:
+  radial-gradient(ellipse at 50% -15%,#66513a2a,transparent 44%),
+  radial-gradient(ellipse at 100% 58%,#30343a30,transparent 42%),
+  linear-gradient(180deg,#151719 0%,#101213 55%,#0c0e0f 100%)!important;
+ background-attachment:fixed!important;
+ font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif!important;
+ letter-spacing:.005em
+}
+body:before{opacity:.18!important;background-size:73px 79px!important}
+main{max-width:590px!important;gap:15px!important;padding:16px 15px calc(28px + env(safe-area-inset-bottom))!important}
+header,.panel{
+ border-radius:17px!important;border-color:#383a38!important;
+ box-shadow:0 15px 40px #0004,inset 0 1px #ffffff08!important
+}
+header{
+ position:relative;overflow:hidden;
+ background:linear-gradient(135deg,#252625 0%,#1a1c1d 58%,#20201e 100%)!important;
+ padding:19px!important
+}
+header:after{
+ height:1px!important;opacity:.85;
+ background:linear-gradient(90deg,transparent,#bda17d99,#e1c7a055,transparent)!important
+}
+.brand{gap:13px!important;align-items:center}
+.logo{
+ width:49px!important;height:49px!important;border-radius:14px!important;
+ background:linear-gradient(145deg,#494239,#292a28)!important;
+ border:1px solid #9d866355!important;box-shadow:inset 0 1px #ffffff20!important;
+ animation:none!important;filter:saturate(.65)
+}
+header h1{
+ font-family:Georgia,"Times New Roman",serif!important;
+ font-size:clamp(19px,5vw,24px)!important;font-weight:600!important;
+ letter-spacing:1.5px!important;line-height:1.1!important;text-shadow:none!important
+}
+header .small{color:#aaa69e!important;font-size:11px!important;letter-spacing:.025em}
+#saveStatus{color:#b8b0a0!important}
+.stats{gap:9px!important;margin-top:17px!important}
+.stat{
+ padding:12px!important;border-radius:12px!important;
+ background:linear-gradient(145deg,#292b2b,#202223)!important;
+ border:1px solid #3c3d3b!important;box-shadow:inset 0 1px #ffffff06!important
+}
+.stat strong{font-size:19px!important;letter-spacing:-.03em}
+.stat .small{font-size:10px!important;text-transform:uppercase;letter-spacing:.08em}
+.track,.hpbar{
+ background:#111313!important;border:1px solid #454440!important;
+ height:6px!important;border-radius:99px!important;overflow:hidden
+}
+.fill{background:linear-gradient(90deg,#9d8262,#d8b48a)!important;box-shadow:none!important;border-radius:99px!important}
+.xpfill{background:linear-gradient(90deg,#b28b58,#e6c99b)!important;box-shadow:none!important}
+.pills{gap:7px!important;margin-top:10px!important}
+.pill{
+ border-radius:999px!important;padding:7px 10px!important;
+ background:#242626!important;border:1px solid #3b3d3a!important;
+ color:#e6e0d5!important;box-shadow:none!important;font-size:12px!important
+}
+.panel{
+ background:linear-gradient(155deg,#202324f7,#191c1df7 75%,#17191af7)!important;
+ padding:17px!important
+}
+h2,h3,.scene h2{
+ color:#f0ece4!important;letter-spacing:-.025em!important
+}
+.panel>h2,#exploreView>h2,#fightView>h2,#bagView>h2{
+ font-family:Georgia,"Times New Roman",serif!important;
+ font-size:clamp(22px,5.8vw,27px)!important;font-weight:500!important;
+ letter-spacing:-.025em!important;margin:2px 0 15px!important
+}
+#exploreView>h2:after,#fightView>h2:after,#bagView>h2:after{
+ background:linear-gradient(90deg,#b69a76,#b69a7625,transparent)!important;
+ height:1px!important;bottom:-8px!important
+}
+.small{color:#b5b1a8}
+.forestHero{
+ min-height:430px!important;border-radius:17px!important;overflow:hidden;
+ background:
+  radial-gradient(ellipse at 75% 17%,#b59a7130,transparent 20%),
+  radial-gradient(ellipse at 50% 55%,#4e515244,transparent 50%),
+  linear-gradient(155deg,#292b2c 0%,#202324 38%,#15191b 72%,#101314 100%)!important;
+ border:1px solid #4b4943!important;
+ box-shadow:0 20px 46px #0006,inset 0 1px #ffffff12!important
+}
+.forestHero:before{background:linear-gradient(180deg,#0d0f1010 15%,#10121320 48%,#0b0d0eeb 100%)!important}
+.forestHero:after{display:none!important}
+.moon{
+ background:#d8c5a2!important;
+ box-shadow:0 0 22px #e5cda344,0 0 65px #c5a97920!important;
+ opacity:.88
+}
+.mountain{background:#343a3a!important}
+.mountainBack{background:#555653!important;opacity:.55!important}
+.mountainFront{background:#1b2020!important}
+.pine{border-bottom-color:#202625!important;filter:drop-shadow(0 5px 8px #0005)!important}
+.pine:after{border-bottom-color:#292e2c!important}
+.pineTwo{border-bottom-color:#151a1a!important}
+.pineThree{border-bottom-color:#353a35!important}
+.forestMist{background:#d6c6a322!important;filter:blur(19px)!important}
+.trail{background:linear-gradient(180deg,#d7b88b28,#d7b88b02)!important}
+.heroTopline span,.heroFooter span{
+ background:#171918c9!important;border:1px solid #aaa08b3d!important;
+ border-radius:999px!important;box-shadow:none!important;color:#ded6c9!important;
+ backdrop-filter:blur(8px)
+}
+.heroTopline b{color:#d8b990!important}
+.heroEyebrow{color:#d2b28b!important;font-size:10px!important;letter-spacing:2.4px!important}
+.heroCopy h2{
+ font-family:Georgia,"Times New Roman",serif!important;
+ font-size:clamp(37px,9.3vw,49px)!important;line-height:.98!important;
+ letter-spacing:-1.5px!important;font-weight:500!important;
+ color:#f3eee5!important;text-shadow:0 5px 25px #0009!important
+}
+.heroCopy h2 em{color:#d7b78e!important;font-style:italic!important}
+.heroCopy p{color:#d0cec6!important;max-width:290px!important;font-size:13px!important;line-height:1.65!important}
+.heroFooter{color:#b7b1a5!important;letter-spacing:.07em}
+button,.zoneBtn{
+ min-height:43px;border-radius:11px!important;
+ font:600 13px/1.25 inherit!important;letter-spacing:.01em;
+ transition:transform .18s ease,background .2s ease,border-color .2s ease,filter .2s ease!important;
+ box-shadow:none!important
+}
+button:not(.primary),.zoneBtn{
+ color:#e9e4da!important;background:linear-gradient(145deg,#292c2c,#202323)!important;
+ border:1px solid #454744!important
+}
+button.primary,nav button.primary{
+ color:#171613!important;
+ background:linear-gradient(135deg,#e0c29b,#c3a17a)!important;
+ border:1px solid #ead4b5!important;
+ box-shadow:0 5px 16px #0003,inset 0 1px #ffffff70!important;
+ font-weight:750!important
+}
+button:not(:disabled):hover,.zoneBtn:hover{filter:brightness(1.08);transform:translateY(-1px)}
+button:not(:disabled):active,.zoneBtn:active{transform:scale(.985)}
+button:disabled{filter:saturate(.35);opacity:.48}
+nav{
+ gap:7px!important;padding:7px!important;border-radius:15px!important;
+ background:#141617eF!important;border:1px solid #343735!important;
+ box-shadow:0 10px 28px #0005!important;backdrop-filter:blur(12px)
+}
+nav button{
+ min-height:42px!important;border-radius:10px!important;
+ background:#222525!important;border:1px solid #383b39!important;color:#c5c1b8!important
+}
+nav button.primary{background:linear-gradient(135deg,#e0c29b,#c3a17a)!important;color:#171613!important}
+.quest,.notice,.craftCard,.skillCard,.achievementRow,.item,.materialTile{
+ background:linear-gradient(145deg,#262929,#1d2020)!important;
+ border:1px solid #3d403d!important;border-radius:13px!important;
+ box-shadow:inset 0 1px #ffffff05!important
+}
+.quest,.craftCard,.skillCard,.achievementRow{padding:13px!important}
+.quest strong,#enemyName{color:#f0e8dc!important}
+.quest progress{accent-color:#c4a17b}
+.notice{color:#e5ded1!important}
+.ok{color:#b7c6ae!important}.warn{color:#d9b58d!important}
+.zoneGrid{gap:8px!important}
+.zoneBtn{min-height:74px!important;text-align:left!important;padding:12px!important}
+.zoneBtn.active{
+ background:linear-gradient(135deg,#454039,#2b2b28)!important;
+ border-color:#b49a78!important;box-shadow:inset 0 0 0 1px #c9b18a1c!important
+}
+.zoneBtn span{color:#bcb7ad!important}
+.zoneBtn.locked{opacity:.52}
+.bossButton{border-color:#8a6650!important}
+.scene{
+ border-radius:14px!important;background:linear-gradient(145deg,#2b2e2d,#1c2020)!important;
+ border:1px solid #414440!important;box-shadow:inset 0 1px #ffffff08!important
+}
+#enemyPanel .scene{filter:saturate(.82) sepia(.08)!important}
+#enemyPanel .scene:before{opacity:.45!important}
+#enemyName{font-family:Georgia,"Times New Roman",serif!important;font-size:25px!important;font-weight:500!important}
+.enemyfill{background:linear-gradient(90deg,#a65d54,#d98b75)!important}
+#combatLog,.gameToast{
+ background:#222625f5!important;color:#eee8dc!important;
+ border:1px solid #4a4a43!important;border-radius:12px!important;
+ box-shadow:0 12px 32px #0006!important
+}
+.badgeItem,.achievementIcon{border-radius:10px!important}
+.achievementRow.locked{opacity:.55!important}
+.achievementRow.unlocked .achievementIcon{background:#514536!important;border-color:#b89b71!important}
+.materialTile b{color:#ddc39d!important}
+input,select,textarea{background:#171a1a!important;color:#f1eee8!important;border-color:#464844!important;border-radius:10px!important}
+video,.cameraWrap,.arCanvasWrap{border-radius:13px!important}
+@media(max-width:420px){
+ main{padding-left:10px!important;padding-right:10px!important;gap:12px!important}
+ header{padding:15px!important}.panel{padding:14px!important}
+ .forestHero{min-height:405px!important}
+ .stat{padding:10px!important}.stat strong{font-size:17px!important}
+ .heroCopy h2{font-size:clamp(35px,10vw,44px)!important}
+}
+@media(prefers-reduced-motion:reduce){
+ *,*:before,*:after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}
+}
+
 </style>
 </head>
 <body>
