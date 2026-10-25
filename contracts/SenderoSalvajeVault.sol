@@ -70,7 +70,7 @@ contract SenderoSalvajeVault is Ownable2Step, ReentrancyGuard, Pausable {
     event ExpeditionStarted(address indexed player, bytes32 indexed expeditionId, uint256 stake);
     event ExpeditionSettled(address indexed player, bytes32 indexed expeditionId, uint256 stake, uint256 payout, address indexed operator);
     event ExpeditionLossRecycled(address indexed player, bytes32 indexed expeditionId, uint256 amount, uint256 newReserve);
-    event ExpeditionEmergencyRefunded(address indexed player, bytes32 indexed expeditionId, uint256 principal);\n    event ExpeditionLossRecycled(address indexed player, bytes32 indexed expeditionId, uint256 amount, uint256 newReserve);
+    event ExpeditionEmergencyRefunded(address indexed player, bytes32 indexed expeditionId, uint256 principal);
     event StakingRewardsFunded(address indexed funder, uint256 amount, uint256 newReserve);
     event StakingRewardRateChanged(uint16 oldBps, uint16 newBps);
     event StakingStarted(address indexed player, uint256 indexed stakeId, uint256 principal, uint256 reward, uint64 unlockAt);
