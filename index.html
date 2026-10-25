@@ -1037,6 +1037,7 @@ creature.visible=false;scene.add(creature);arCreature=creature;arSession=await n
  const NETWORK_LABEL="Base Sepolia";
  let walletProvider=null;
  let walletAccount=null;
+ let coinbaseSdk=null;
  const walletShort=a=>a?a.slice(0,6)+"…"+a.slice(-4):"";
  const walletStatus=(message,kind="")=>{const el=$("walletStatus");if(!el)return;el.textContent=message;el.dataset.kind=kind};
  const walletNetworkName=chainId=>{
@@ -1048,7 +1049,7 @@ creature.visible=false;scene.add(creature);arCreature=creature;arSession=await n
  const walletRender=async()=>{
   const details=$("walletDetails"),connect=$("walletConnectBtn"),disconnect=$("walletDisconnectBtn"),networkBtn=$("walletNetworkBtn");
   if(!details||!connect||!disconnect||!networkBtn)return;
-  const provider=window.ethereum;
+  const provider=walletProvider||window.ethereum;
   if(!provider){walletAccount=null;details.classList.add("hidden");disconnect.classList.add("hidden");connect.disabled=false;connect.textContent="Conectar con Base Wallet";networkBtn.disabled=true;walletStatus("No se detectó una billetera en este navegador. En Android, abrí esta URL desde el navegador Web3 de Base / Coinbase Wallet y volvé a tocar Conectar billetera.","warn");return}
   walletProvider=provider;
   let accounts=[],chainId="";
@@ -1078,7 +1079,7 @@ creature.visible=false;scene.add(creature);arCreature=creature;arSession=await n
     if(!CoinbaseWalletSDK)throw new Error("No se pudo cargar el SDK oficial de Coinbase Wallet.");
     coinbaseSdk=new CoinbaseWalletSDK({
      appName:"Sendero Salvaje",
-     appLogoUrl:location.origin+"/icon.svg",
+     appLogoUrl:new URL("icon.svg",location.href).href,
      enableMobileWalletLink:true
     });
    }
@@ -1118,6 +1119,7 @@ creature.visible=false;scene.add(creature);arCreature=creature;arSession=await n
  };
  const walletDisconnectView=()=>{
   walletAccount=null;
+  walletProvider=null;
   $("walletDetails").classList.add("hidden");
   $("walletDisconnectBtn").classList.add("hidden");
   $("walletConnectBtn").textContent="Conectar con Base Wallet";
