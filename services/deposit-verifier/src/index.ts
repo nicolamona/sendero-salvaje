@@ -178,7 +178,7 @@ export default {
             return null;
           }
         })
-        .filter((entry): entry is { log: any; player: string; amount: bigint; newAvailableBalance: bigint } =>
+        .filter((entry: { log: any; player: string; amount: bigint; newAvailableBalance: bigint } | null): entry is { log: any; player: string; amount: bigint; newAvailableBalance: bigint } =>
           Boolean(entry && entry.player === wallet && entry.amount > 0n));
 
       if (decoded.length !== 1) {
