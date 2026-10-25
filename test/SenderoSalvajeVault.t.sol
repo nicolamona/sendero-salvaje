@@ -111,6 +111,18 @@ contract SenderoSalvajeVaultTest is Test {
         vault.settleExpedition(alice, id, SenderoSalvajeVault.ExpeditionOutcome.Win);
     }
 
+    function testCannotSettleBeforeQuorumApprovesOutcome() public {
+        bytes32 id = keccak256("forest-expedition-quorum");
+        vm.prank(alice);
+        vault.deposit{value: 1 ether}();
+        vm.prank(alice);
+        vault.startExpedition(id, 1 ether);
+
+        vault.approveExpeditionOutcome(alice, id, SenderoSalvajeVault.ExpeditionOutcome.Refund);
+        vm.expectRevert(SenderoSalvajeVault.QuorumNotReached.selector);
+        vault.settleExpedition(alice, id, SenderoSalvajeVault.ExpeditionOutcome.Refund);
+    }
+
     function testPlayerCanEmergencyRefundExpeditionWhilePaused() public {
         bytes32 id = keccak256("forest-expedition-pause");
         vm.prank(alice);
