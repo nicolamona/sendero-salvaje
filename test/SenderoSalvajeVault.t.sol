@@ -77,6 +77,24 @@ contract SenderoSalvajeVaultTest is Test {
         assertTrue(vault.isSolvent());
     }
 
+    function testWinningExpeditionPaysOnlyFixedPreFundedReward() public {
+        bytes32 id = keccak256("forest-expedition-win");
+        vault.fundExpeditionRewards{value: 0.2 ether}();
+        vault.setExpeditionWinRewardBps(1_000);
+
+        vm.prank(alice);
+        vault.deposit{value: 1 ether}();
+        vm.prank(alice);
+        vault.startExpedition(id, 1 ether);
+
+        vault.settleExpedition(alice, id, SenderoSalvajeVault.ExpeditionOutcome.Win);
+
+        assertEq(vault.availableBalance(alice), 1.1 ether);
+        assertEq(vault.expeditionRewardReserve(), 0.1 ether);
+        assertEq(vault.totalExpeditionPrincipal(), 0);
+        assertTrue(vault.isSolvent());
+    }
+
     function testWinningExpeditionRequiresPreFundedRewardReserve() public {
         bytes32 id = keccak256("forest-expedition-2");
         vm.prank(alice);
