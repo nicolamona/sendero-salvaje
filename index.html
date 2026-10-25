@@ -114,6 +114,17 @@ button:active{transform:translateY(2px);box-shadow:0 1px 0 #0b171a}button:hover{
 @media(prefers-reduced-motion:reduce){.enemy{animation:none}}
 
 
+/* Expansión 2026 · regiones, jefes y encuentros */
+.zonePanel{margin-top:12px;background:linear-gradient(135deg,#1b382b,#10221f)!important}
+.zoneGrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.zoneBtn{min-height:66px!important;text-align:left;padding:10px!important;display:flex;flex-direction:column;gap:3px}
+.zoneBtn span{font-size:12px;font-weight:500;color:#bad1c2}
+.zoneBtn.active{border-color:#b8f3c6!important;background:linear-gradient(135deg,#315d42,#1c3c2c)!important;box-shadow:0 0 0 1px #8ce3b044,inset 0 1px #ffffff12!important}
+.zoneBtn.locked{opacity:.55;filter:saturate(.45)}
+.bossButton{background:linear-gradient(135deg,#73502a,#3d271c)!important;border-color:#c89d5a!important;color:#fff0c8!important}
+.bossButton:disabled{opacity:.45}
+.rarity-legendaria{border-color:#e6bd58!important;color:#ffe59a!important;background:#392c14!important}
+@media(max-width:360px){.zoneGrid{grid-template-columns:1fr}.zoneBtn{min-height:54px!important}}
 /* Rediseño visible v14: interfaz de aventura y criaturas ilustradas */
 body{background:#07110f!important;background-image:radial-gradient(ellipse at 50% 0%,#27513a 0,transparent 42%),linear-gradient(180deg,#0b1917,#070e12 76%)!important}
 main{max-width:680px;gap:16px;padding:12px 12px calc(28px + env(safe-area-inset-bottom))}
@@ -222,6 +233,7 @@ nav button{font-size:13px!important;padding:10px 4px!important;min-height:44px!i
 <section class="panel" id="exploreView">
  <h2>Exploración</h2>
  <div class="scene forestHero"><div class="heroTopline"><span>✦ ZONA SALVAJE</span><span>RANGO <b>01</b></span></div><div class="forestArtwork" aria-hidden="true"><span class="moon"></span><span class="mountain mountainBack"></span><span class="mountain mountainFront"></span><span class="pine pineOne"></span><span class="pine pineTwo"></span><span class="pine pineThree"></span><span class="forestMist"></span><span class="trail"></span></div><div class="heroCopy"><span class="heroEyebrow">TU AVENTURA COMIENZA AQUÍ</span><h2>El bosque<br><em>te está esperando.</em></h2><p>Rastreá criaturas, ganá experiencia y convertite en leyenda.</p></div><div class="heroFooter"><span>⌖ EXPLORACIÓN ACTIVA</span><span>☾ BOSQUE ANTIGUO</span></div></div>
+ <div class="quest zonePanel"><strong>🗺️ Regiones de Sendero Salvaje</strong><p class="small" id="zoneDescription">Elegí una región para encontrar criaturas distintas.</p><div class="zoneGrid" id="zoneGrid"></div><div class="small" id="zoneStatus">Las regiones más peligrosas se desbloquean al subir de nivel.</div><button id="bossBtn" class="bossButton" style="width:100%;margin-top:10px">👑 Desafiar al jefe de la región · nivel 3</button><div class="small" id="bossStatus">Derrotá al jefe para ganar un gran botín y materiales únicos.</div></div>
  <div class="actions" style="margin-top:12px"><button class="primary" id="searchBtn">🔎 Rastrear criatura</button><button id="gpsBtn">📍 Activar GPS</button><button id="arBtn">🥽 AR espacial</button><button id="cameraBtn">📷 Cámara clásica</button></div>
  <div id="gpsInfo" class="notice" style="margin-top:10px">GPS apagado. Podés jugar sin compartir tu ubicación; activarlo permite registrar tu zona de exploración en este dispositivo.</div><div class="quest"><strong>🧭 Contrato del explorador</strong><span id="questText" class="small">Derrotá 3 criaturas para cobrar una recompensa.</span><progress id="questProgress" max="3" value="0"></progress></div><div class="quest dailyQuest"><strong>☀️ Misión diaria</strong><span id="dailyQuestText" class="small">Derrotá 2 criaturas hoy para ganar 25 monedas y una poción.</span><progress id="dailyProgress" max="2" value="0"></progress><button id="dailyRewardBtn" class="primary hidden" style="width:100%;margin-top:9px">Cobrar recompensa diaria</button></div><div id="arPanel" class="hidden" style="margin-top:12px"><div class="arCanvasWrap" id="arCanvasWrap"><div class="arHud"><span id="arStatus">Buscando una superficie…</span><span>AR espacial</span></div></div><p class="small">Mové lentamente el teléfono hacia el suelo. La criatura se colocará sola sobre una superficie detectada; si el navegador no ofrece esa detección, aparecerá fijada delante tuyo. No hace falta tocar la pantalla.</p><div class="actions"><button class="primary" id="arFightBtn" disabled>⚔️ Combatir criatura</button><button id="arCloseBtn">Salir de AR</button></div></div>
  <div id="cameraPanel" class="hidden" style="margin-top:12px">
@@ -249,14 +261,33 @@ nav button{font-size:13px!important;padding:10px 4px!important;min-height:44px!i
 </main>
 <script>
 const $=id=>document.getElementById(id);
+const zones=[
+ {id:"bosque",name:"Bosque Antiguo",icon:"🌲",level:1,description:"Criaturas del bosque y senderos olvidados."},
+ {id:"pantano",name:"Pantano Venenoso",icon:"☠️",level:3,description:"Aguas tóxicas y criaturas que acechan entre la niebla."},
+ {id:"ruinas",name:"Ruinas Antiguas",icon:"🏛️",level:6,description:"Guardianes rúnicos y espectros de otra era."},
+ {id:"cumbres",name:"Cumbres Heladas",icon:"❄️",level:10,description:"Depredadores de hielo y bestias de las alturas."}
+];
 const enemies=[
- {name:"Slime salvaje",emoji:"🟢",hp:32,atk:7,xp:20,gold:8,drop:"Gota de slime"},
- {name:"Lobo sombrío",emoji:"🐺",hp:48,atk:10,xp:35,gold:14,drop:"Colmillo sombrío"},
- {name:"Gólem antiguo",emoji:"🗿",hp:70,atk:13,xp:55,gold:22,drop:"Fragmento de piedra"}
+ {name:"Slime salvaje",emoji:"🟢",hp:32,atk:7,xp:20,gold:8,drop:"Gota de slime",zone:"bosque"},
+ {name:"Lobo sombrío",emoji:"🐺",hp:48,atk:10,xp:35,gold:14,drop:"Colmillo sombrío",zone:"bosque"},
+ {name:"Gólem antiguo",emoji:"🗿",hp:70,atk:13,xp:55,gold:22,drop:"Fragmento de piedra",zone:"bosque"},
+ {name:"Araña venenosa",emoji:"🕷️",hp:54,atk:12,xp:42,gold:18,drop:"Saco de veneno",zone:"pantano"},
+ {name:"Espíritu del pantano",emoji:"👻",hp:66,atk:13,xp:50,gold:21,drop:"Esencia brumosa",zone:"pantano"},
+ {name:"Guardián rúnico",emoji:"🗿",hp:88,atk:16,xp:72,gold:30,drop:"Fragmento rúnico",zone:"ruinas"},
+ {name:"Espectro antiguo",emoji:"👻",hp:78,atk:18,xp:78,gold:32,drop:"Velo espectral",zone:"ruinas"},
+ {name:"Grifo helado",emoji:"🦅",hp:108,atk:21,xp:95,gold:40,drop:"Pluma glacial",zone:"cumbres"},
+ {name:"Dragón de escarcha",emoji:"🐉",hp:132,atk:24,xp:120,gold:52,drop:"Escama de escarcha",zone:"cumbres"}
+];
+const bosses=[
+ {name:"Raíz Colosal",emoji:"🌳",hp:210,atk:17,xp:180,gold:120,drop:"Corazón de la Raíz",zone:"bosque",boss:true},
+ {name:"Reina del Pantano",emoji:"🕷️",hp:290,atk:22,xp:250,gold:170,drop:"Corona Venenosa",zone:"pantano",boss:true},
+ {name:"Titán de las Ruinas",emoji:"🗿",hp:390,atk:27,xp:340,gold:240,drop:"Núcleo Ancestral",zone:"ruinas",boss:true},
+ {name:"Dragón Boreal",emoji:"🐉",hp:540,atk:33,xp:480,gold:350,drop:"Corazón Boreal",zone:"cumbres",boss:true}
 ];
 const todayKey=()=>{const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")};
-const initial=()=>({hp:100,maxHp:100,xp:0,level:1,potions:2,gold:0,defeated:0,items:[],bestiary:[],daily:{date:todayKey(),defeated:0,claimed:false},weaponLevel:0,armorLevel:0,soundOn:true,enemy:null,enemyHp:0,contractClaimed:false});
-function createEncounter(){const base=enemies[Math.floor(Math.random()*enemies.length)];const roll=Math.random();const rarity=roll<.05?"legendaria":roll<.25?"rara":"común";const mult=rarity==="legendaria"?1.8:rarity==="rara"?1.35:1;return {...base,rarity,hp:Math.round(base.hp*mult),atk:Math.round(base.atk*(rarity==="legendaria"?1.45:rarity==="rara"?1.2:1)),xp:Math.round(base.xp*mult),gold:Math.round(base.gold*mult),drop:rarity==="común"?base.drop:(rarity==="rara"?"Reliquia rara: ":"Reliquia legendaria: ")+base.drop};}
+const initial=()=>({hp:100,maxHp:100,xp:0,level:1,potions:2,gold:0,defeated:0,bossesDefeated:0,zone:"bosque",items:[],bestiary:[],daily:{date:todayKey(),defeated:0,claimed:false},weaponLevel:0,armorLevel:0,soundOn:true,enemy:null,enemyHp:0,contractClaimed:false});
+function createEncounter(){const available=enemies.filter(e=>e.zone===(state.zone||"bosque"));const pool=available.length?available:enemies.filter(e=>e.zone==="bosque");const base=pool[Math.floor(Math.random()*pool.length)];const roll=Math.random();const rarity=roll<.05?"legendaria":roll<.25?"rara":"común";const mult=rarity==="legendaria"?1.8:rarity==="rara"?1.35:1;return {...base,rarity,hp:Math.round(base.hp*mult),atk:Math.round(base.atk*(rarity==="legendaria"?1.45:rarity==="rara"?1.2:1)),xp:Math.round(base.xp*mult),gold:Math.round(base.gold*mult),drop:rarity==="común"?base.drop:(rarity==="rara"?"Reliquia rara: ":"Reliquia legendaria: ")+base.drop};}
+function createBossEncounter(){const zone=state.zone||"bosque";const base=bosses.find(b=>b.zone===zone)||bosses[0];return {...base,rarity:"legendaria"};}
 let state;
 try{state={...initial(),...JSON.parse(localStorage.getItem("senderoSalvajeSave")||"{}")}}catch{state=initial()}
 if(!Number.isFinite(state.maxHp)||state.maxHp<100)state.maxHp=100;
@@ -264,6 +295,8 @@ state.weaponLevel=Math.max(0,Math.min(3,Number(state.weaponLevel)||0));state.arm
 if(!state.daily||state.daily.date!==todayKey())state.daily={date:todayKey(),defeated:0,claimed:false};
 state.hp=Math.max(0,Math.min(state.maxHp,Number(state.hp)||0));
 if(!Array.isArray(state.bestiary))state.bestiary=[];
+if(!state.zone||!zones.some(z=>z.id===state.zone))state.zone="bosque";
+if(!Number.isFinite(state.bossesDefeated))state.bossesDefeated=0;
 let cameraStream=null,cameraEncounter=null,watchId=null,arSession=null,arRenderer=null,arPlaced=false,arCreature=null,arHitSource=null,arEncounter=null;
 function save(){try{localStorage.setItem("senderoSalvajeSave",JSON.stringify(state));$("saveStatus").textContent="✓ Progreso guardado en este dispositivo"}catch(e){$("saveStatus").textContent="No se pudo guardar; revisá el espacio del navegador."}}
 function registerDiscovery(enemy){if(!Array.isArray(state.bestiary))state.bestiary=[];let record=state.bestiary.find(x=>x.name===enemy.name);let message="";if(record)record.seen=(record.seen||0)+1;else{state.bestiary.push({name:enemy.name,seen:1,defeated:0});message="¡Nueva criatura descubierta: "+enemy.name+"!"}if(enemy.rarity==="legendaria")message="✦ ¡ENCUENTRO LEGENDARIO! "+enemy.name+" ✦";else if(enemy.rarity==="rara")message="¡Criatura rara encontrada: "+enemy.name+"!";if(message){showToast(message);sound(enemy.rarity==="legendaria"?"win":"discovery")}}
@@ -271,6 +304,15 @@ function haptic(pattern=18){try{if(typeof navigator!=="undefined"&&navigator.vib
 let deferredInstallPrompt=null;window.addEventListener("beforeinstallprompt",event=>{event.preventDefault();deferredInstallPrompt=event;$("installInfo").textContent="Instalable en este dispositivo: tocá el botón para agregarla a tu pantalla de inicio."});window.addEventListener("appinstalled",()=>{$("installBtn").classList.add("hidden");$("installInfo").textContent="Sendero Salvaje quedó instalado en tu teléfono.";});$("installBtn").onclick=async()=>{if(!deferredInstallPrompt){$("installInfo").textContent=/iPhone|iPad|iPod/i.test(navigator.userAgent)?"En Safari: tocá Compartir y elegí “Agregar a pantalla de inicio”.":"En Android: abrí el menú ⋮ de Chrome y elegí “Instalar aplicación” o “Agregar a pantalla principal”.";return}deferredInstallPrompt.prompt();try{await deferredInstallPrompt.userChoice}catch(e){}deferredInstallPrompt=null;$("installInfo").textContent="Si aceptaste, Sendero Salvaje aparecerá en tu pantalla de inicio."};
 let audioCtx=null,toastTimer=null;function showToast(message){const el=$("gameToast");if(!el)return;el.textContent=message;el.classList.add("show");clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove("show"),2800)}function sound(type="tap"){if(state.soundOn===false)return;try{const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;audioCtx=audioCtx||new AC();if(audioCtx.state==="suspended")audioCtx.resume();const now=audioCtx.currentTime;const osc=audioCtx.createOscillator();const gain=audioCtx.createGain();const tones={attack:[180,.09],critical:[420,.18],win:[660,.22],heal:[520,.13],upgrade:[740,.16],discovery:[880,.2],tap:[320,.07]};const cfg=tones[type]||tones.tap;osc.type=type==="win"||type==="heal"?"sine":"triangle";osc.frequency.setValueAtTime(cfg[0],now);if(type==="critical")osc.frequency.exponentialRampToValueAtTime(760,now+.09);if(type==="win")osc.frequency.exponentialRampToValueAtTime(990,now+.12);gain.gain.setValueAtTime(.0001,now);gain.gain.exponentialRampToValueAtTime(.07,now+.015);gain.gain.exponentialRampToValueAtTime(.0001,now+cfg[1]);osc.connect(gain);gain.connect(audioCtx.destination);osc.start(now);osc.stop(now+cfg[1]+.02)}catch(e){}}
 function render(){
+ const currentZone=zones.find(z=>z.id===(state.zone||"bosque"))||zones[0];
+ $("zoneDescription").textContent=currentZone.icon+" "+currentZone.name+" — "+currentZone.description;
+ $("zoneGrid").innerHTML=zones.map(z=>{const unlocked=state.level>=z.level;return '<button class="zoneBtn '+(z.id===currentZone.id?"active ":"")+(unlocked?"":"locked")+'" data-zone="'+z.id+'" '+(unlocked?"":"disabled")+'>'+z.icon+" "+escapeHtml(z.name)+'<span>'+(unlocked?"Nivel recomendado "+z.level:"🔒 Se desbloquea en nivel "+z.level)+'</span></button>'}).join("");
+ $("zoneGrid").querySelectorAll("[data-zone]").forEach(btn=>btn.onclick=()=>{const zone=zones.find(z=>z.id===btn.dataset.zone);if(zone&&state.level>=zone.level&&!state.enemy){state.zone=zone.id;render()}else if(state.enemy){$("zoneStatus").textContent="Terminá el combate actual antes de cambiar de región."}});
+ $("zoneStatus").textContent="Región actual: "+currentZone.name+" · Jefes derrotados: "+(state.bossesDefeated||0);
+ const boss=bosses.find(b=>b.zone===currentZone.id)||bosses[0];
+ $("bossBtn").textContent="👑 Desafiar a "+boss.name+" · "+boss.hp+" HP";
+ $("bossBtn").disabled=state.level<Math.max(3,currentZone.level)||!!state.enemy||state.hp<=0;
+ $("bossStatus").textContent=state.level<Math.max(3,currentZone.level)?"Necesitás nivel "+Math.max(3,currentZone.level)+" y salud para desafiarlo.":"Recompensa: "+boss.gold+" monedas, "+boss.xp+" XP y "+boss.drop+".";
  $("hpText").textContent=state.hp+"/"+state.maxHp;$("hpFill").style.width=Math.min(100,state.hp/state.maxHp*100)+"%";
  $("xpText").textContent=state.xp+"/"+(state.level*100)+" XP";$("xpFill").style.width=Math.min(100,state.xp/(state.level*100)*100)+"%";
  $("goldText").textContent=state.gold;$("potionsText").textContent=state.potions;$("levelText").textContent=state.level;$("bagPotions").textContent="×"+state.potions;$("soundToggleBtn").textContent=state.soundOn===false?"🔇 Sonido desactivado":"🔊 Sonido activado";
@@ -294,8 +336,9 @@ function monsterIllustration(name){
 function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
 function view(name){for(const n of ["explore","fight","bag"]){$(n+"View").classList.toggle("hidden",n!==name);$("tab"+({explore:"Explore",fight:"Fight",bag:"Bag"}[n])).classList.toggle("primary",n===name)}}
 $("tabExplore").onclick=()=>view("explore");$("tabFight").onclick=()=>view("fight");$("tabBag").onclick=()=>view("bag");$("goExploreBtn").onclick=()=>view("explore");
+$("bossBtn").onclick=()=>{if(state.enemy||state.hp<=0||state.level<Math.max(3,(zones.find(z=>z.id===state.zone)||zones[0]).level))return;const e=createBossEncounter();state.enemy={...e};state.enemyHp=e.hp;registerDiscovery(e);$("combatLog").textContent="¡JEFE ÉPICO! "+e.name+" bloquea el camino. Prepará tus mejores ataques.";render();view("fight")};
 $("searchBtn").onclick=()=>{if(state.hp<=0){alert("Recuperá salud antes de seguir.");view("fight");return}if(state.enemy){view("fight");return}const e=createEncounter();state.enemy={...e};state.enemyHp=e.hp;registerDiscovery(e);$("combatLog").textContent="¡Apareció "+e.name+"! Elegí tu acción.";render();view("fight")};
-function win(){haptic([35,25,90]);sound("win");const e=state.enemy;if(!state.daily||state.daily.date!==todayKey())state.daily={date:todayKey(),defeated:0,claimed:false};state.daily.defeated++;state.xp+=e.xp;state.gold+=e.gold;state.defeated++;const record=state.bestiary.find(x=>x.name===e.name);if(record)record.defeated=(record.defeated||0)+1;state.items.unshift("🏆 "+e.drop+" — "+e.name);state.enemy=null;state.enemyHp=0;const oldLevel=state.level;while(state.xp>=state.level*100){state.xp-=state.level*100;state.level++;state.maxHp+=10;state.hp=Math.min(state.maxHp,state.hp+20);state.gold+=10}const levelMessage=state.level>oldLevel?" ¡SUBISTE "+(state.level-oldLevel)+" nivel(es)! Salud máxima +"+((state.level-oldLevel)*10)+", curación +20 y +"+((state.level-oldLevel)*10)+" monedas de nivel.":"";$("combatLog").textContent="¡Victoria! Ganaste "+e.xp+" XP y "+e.gold+" monedas. Conseguí: "+e.drop+"."+levelMessage;render()}
+function win(){haptic([35,25,90]);sound("win");const e=state.enemy;if(!state.daily||state.daily.date!==todayKey())state.daily={date:todayKey(),defeated:0,claimed:false};state.daily.defeated++;state.xp+=e.xp;state.gold+=e.gold;state.defeated++;if(e.boss){state.bossesDefeated=(state.bossesDefeated||0)+1;state.gold+=75;state.items.unshift("👑 Trofeo de jefe: "+e.name)}const record=state.bestiary.find(x=>x.name===e.name);if(record)record.defeated=(record.defeated||0)+1;state.items.unshift("🏆 "+e.drop+" — "+e.name);state.enemy=null;state.enemyHp=0;const oldLevel=state.level;while(state.xp>=state.level*100){state.xp-=state.level*100;state.level++;state.maxHp+=10;state.hp=Math.min(state.maxHp,state.hp+20);state.gold+=10}const levelMessage=state.level>oldLevel?" ¡SUBISTE "+(state.level-oldLevel)+" nivel(es)! Salud máxima +"+((state.level-oldLevel)*10)+", curación +20 y +"+((state.level-oldLevel)*10)+" monedas de nivel.":"";$("combatLog").textContent=(e.boss?"¡JEFE DERROTADO! Botín extra +75 monedas. ":"¡Victoria! ")+"Ganaste "+e.xp+" XP y "+e.gold+" monedas. Conseguí: "+e.drop+"."+levelMessage;render()}
 $("attackBtn").onclick=()=>{if(!state.enemy||state.hp<=0)return;const critical=Math.random()<.15;haptic(critical?[35,25,65]:18);sound(critical?"critical":"attack");const damage=(12+(state.level-1)*2+state.weaponLevel*4+Math.floor(Math.random()*9))*(critical?2:1);state.enemyHp=Math.max(0,state.enemyHp-damage);if(state.enemyHp===0){win();if(critical)$("combatLog").textContent="¡GOLPE CRÍTICO! "+$("combatLog").textContent;return}const hurt=Math.max(1,state.enemy.atk+Math.floor((state.level-1)*.6)-state.armorLevel*2-Math.floor(Math.random()*4));state.hp=Math.max(0,state.hp-hurt);$("combatLog").textContent=(critical?"¡GOLPE CRÍTICO! ":"")+"Hiciste "+damage+" de daño. "+state.enemy.name+" te hizo "+hurt+" de daño.";if(state.hp===0)$("combatLog").textContent+=" Te quedaste sin salud.";render()};
 $("healBtn").onclick=()=>{if(!state.enemy||state.potions<=0||state.hp>=state.maxHp)return;state.potions--;haptic(28);sound("heal");state.hp=Math.min(state.maxHp,state.hp+35);const hurt=Math.max(1,state.enemy.atk-3-state.armorLevel*2);state.hp=Math.max(0,state.hp-hurt);$("combatLog").textContent="Usaste una poción; el enemigo te hizo "+hurt+" de daño.";render()};
 $("fleeBtn").onclick=()=>{state.enemy=null;state.enemyHp=0;$("combatLog").textContent="Escapaste sin recompensas.";render();view("explore")};
