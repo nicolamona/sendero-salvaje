@@ -788,7 +788,7 @@ video,.cameraWrap,.arCanvasWrap{border-radius:13px!important}
   <div class="walletDetail"><span class="small">Dirección conectada</span><strong id="walletAddress">—</strong><button type="button" id="walletCopyBtn" class="walletMiniBtn">Copiar dirección</button></div>
   <div class="walletDetail"><span class="small">Red detectada</span><strong id="walletNetwork">—</strong></div>
  </div>
- <div class="walletActions"><button type="button" id="walletConnectBtn" class="primary">Elegir billetera</button><button type="button" id="walletNetworkBtn">Usar Base Sepolia</button><button type="button" id="walletDisconnectBtn" class="walletMiniBtn hidden">Desconectar vista</button></div><div id="walletChoicePanel" class="walletActions hidden" style="margin-top:8px"><button type="button" id="walletBaseChoiceBtn">🟦 Base Wallet</button><button type="button" id="walletMetaMaskBtn">🦊 MetaMask</button><button type="button" id="walletCancelChoiceBtn" class="walletMiniBtn" style="grid-column:1/-1">Cancelar</button></div>
+ <div class="walletActions"><button type="button" id="walletConnectBtn" class="primary">Elegir billetera</button><button type="button" id="walletNetworkBtn">Usar Base Mainnet</button><button type="button" id="walletDisconnectBtn" class="walletMiniBtn hidden">Desconectar vista</button></div><div id="walletChoicePanel" class="walletActions hidden" style="margin-top:8px"><button type="button" id="walletBaseChoiceBtn">🟦 Base Wallet</button><button type="button" id="walletMetaMaskBtn">🦊 MetaMask</button><button type="button" id="walletCancelChoiceBtn" class="walletMiniBtn" style="grid-column:1/-1">Cancelar</button></div>
  <p class="small walletFootnote">Nunca ingreses tu frase semilla ni tu clave privada aquí. Esta versión no pide firmas, no envía fondos y no modifica tus monedas del juego.</p>
 </section>
 <section class="panel" id="exploreView">
@@ -1033,8 +1033,8 @@ for(let i=0;i<(isBoss?18:10);i++){
 creature.visible=false;scene.add(creature);arCreature=creature;arSession=await navigator.xr.requestSession("immersive-ar",{requiredFeatures:[],optionalFeatures:["hit-test","dom-overlay"],domOverlay:{root:$("arPanel")}});arSession.addEventListener("end",cleanupAR,{once:true});await arRenderer.xr.setSession(arSession);try{const viewer=await arSession.requestReferenceSpace("viewer");arHitSource=await arSession.requestHitTestSource({space:viewer})}catch(e){arHitSource=null}let arFrameCount=0;arRenderer.setAnimationLoop((time,frame)=>{if(frame){arFrameCount++;const ref=arRenderer.xr.getReferenceSpace();if(arHitSource&&!arPlaced){const hits=frame.getHitTestResults(arHitSource);if(hits.length){const pose=hits[0].getPose(ref);if(pose){const surfaceMatrix=new THREE.Matrix4().fromArray(pose.transform.matrix);creature.position.setFromMatrixPosition(surfaceMatrix);creature.quaternion.setFromRotationMatrix(surfaceMatrix);creature.position.y+=.24;creature.visible=true;arPlaced=true;registerDiscovery(arEncounter);haptic([25,20,45]);reticle.visible=false;$("arFightBtn").disabled=false;$("arStatus").textContent=arEncounter.name+" ("+arEncounter.rarity+") apareció sobre una superficie detectada y quedó anclado al entorno."}}}if(!arPlaced&&arFrameCount>180){const xrCamera=arRenderer.xr.getCamera(camera);xrCamera.updateMatrixWorld(true);const forward=new THREE.Vector3();const origin=new THREE.Vector3();xrCamera.getWorldDirection(forward);xrCamera.getWorldPosition(origin);creature.position.copy(origin).addScaledVector(forward,1.45);creature.position.y-=.12;creature.quaternion.identity();creature.visible=true;arPlaced=true;registerDiscovery(arEncounter);haptic([25,20,45]);$("arFightBtn").disabled=false;$("arStatus").textContent=arEncounter.name+" ("+arEncounter.rarity+") apareció delante tuyo. No se detectó una superficie; quedó fijado en el espacio."}if(!arPlaced&&arHitSource){const hits=frame.getHitTestResults(arHitSource);if(!hits.length){reticle.visible=false;$("arStatus").textContent="Buscando el suelo automáticamente…"}}}if(creature.visible){const t=time*.001;creature.rotation.y+=isBoss?.009:.005;body.rotation.z=Math.sin(t*1.8)*.025;body.position.y=Math.sin(t*2.2)*.018;for(const part of arAnimated){if(part.kind==="limb")part.mesh.rotation.z=part.side*(.22+Math.sin(t*4+part.phase)*.12);else if(part.kind==="rune")part.mesh.rotation.z+=.006;else if(part.kind==="halo")part.mesh.rotation.z+=.012}for(const wing of arWings){wing.mesh.rotation.z=wing.base+Math.sin(t*5+wing.side)*.22;wing.mesh.rotation.y=wing.side*(.1+Math.sin(t*3)*.08)}for(const p of arParticles){const a=p.angle+t*p.speed;p.mesh.position.x=Math.cos(a)*p.radius;p.mesh.position.z=Math.sin(a)*p.radius;p.mesh.position.y=-.12+((Math.sin(t*1.7+p.phase)+1)*.5)*.34;p.mesh.material.opacity=.35+((Math.sin(t*2+p.phase)+1)*.5)*.5}floorShadow.material.opacity=.28+((Math.sin(t*2)+1)*.5)*.14}arRenderer.render(scene,camera)});$("arStatus").textContent="Buscando el suelo para colocar la criatura automáticamente. No hace falta tocar la pantalla."}catch(e){const detail=(e.name?e.name+": ":"")+(e.message||"falló el inicio de realidad aumentada");if(arSession){const failedSession=arSession;failedSession.removeEventListener("end",cleanupAR);arSession=null;try{await failedSession.end()}catch{}}if(arRenderer){arRenderer.setAnimationLoop(null);arRenderer.dispose();arRenderer.domElement.remove();arRenderer=null}arHitSource=null;arCreature=null;arEncounter=null;arPlaced=false;$("arPanel").classList.remove("hidden");$("arFightBtn").disabled=true;$("arStatus").textContent="No se pudo iniciar realidad aumentada ("+detail+"). Copiá este mensaje para diagnosticar."; $("gpsInfo").textContent="La realidad aumentada requiere compatibilidad con WebXR/ARCore. Detalle: "+detail;}}function cleanupAR(){if(arRenderer){arRenderer.setAnimationLoop(null);arRenderer.dispose();arRenderer.domElement.remove();arRenderer=null}arSession=null;arHitSource=null;arCreature=null;arEncounter=null;arPlaced=false;$("arPanel").classList.add("hidden");$("arFightBtn").disabled=true}function stopSpatialAR(){if(arSession){const s=arSession;arSession=null;s.end().catch(()=>cleanupAR())}else cleanupAR()}window.addEventListener("pagehide",()=>{stopSpatialAR();if(cameraStream)cameraStream.getTracks().forEach(t=>t.stop());if(watchId!==null&&navigator.geolocation)navigator.geolocation.clearWatch(watchId)});if("serviceWorker" in navigator && location.protocol!=="file:"){navigator.serviceWorker.register("./sw.js",{updateViaCache:"none"}).then(reg=>reg.update()).catch(()=>{})}
 /* Economía cripto V1: conectar y leer cuenta/red; no firma ni envía transacciones. */
 (()=>{
- const EXPECTED_CHAIN_ID="0x14a34";
- const NETWORK_LABEL="Base Sepolia";
+ const EXPECTED_CHAIN_ID="0x2105";
+ const NETWORK_LABEL="Base Mainnet";
  let walletProvider=null;
  let walletAccount=null;
  let coinbaseSdk=null;
@@ -1064,7 +1064,7 @@ creature.visible=false;scene.add(creature);arCreature=creature;arSession=await n
    $("walletAddress").title=walletAccount;
    details.classList.remove("hidden");disconnect.classList.remove("hidden");
    connect.textContent="Billetera conectada";connect.disabled=false;$("walletChoicePanel").classList.add("hidden");
-   walletStatus(chainId.toLowerCase()===EXPECTED_CHAIN_ID?"Conectada a Base Sepolia. Solo se lee la cuenta y la red; no se enviaron transacciones.":"Billetera conectada, pero la red no es Base Sepolia. Cambiá a la testnet antes de continuar.",chainId.toLowerCase()===EXPECTED_CHAIN_ID?"ok":"warn");
+   walletStatus(chainId.toLowerCase()===EXPECTED_CHAIN_ID?"Conectada a Base Mainnet. Solo se lee la cuenta y la red; no se enviaron transacciones.":"Billetera conectada, pero la red no es Base Mainnet. Cambiá a la red correcta antes de continuar.",chainId.toLowerCase()===EXPECTED_CHAIN_ID?"ok":"warn");
   }else{
    details.classList.add("hidden");disconnect.classList.add("hidden");connect.textContent="Elegir billetera";connect.disabled=false;
    walletStatus("Billetera disponible, todavía no conectada. No se solicitarán firmas ni fondos.");
@@ -1114,7 +1114,7 @@ creature.visible=false;scene.add(creature);arCreature=creature;arSession=await n
     if(typeof createEVMClient!=="function")throw new Error("No se pudo cargar MetaMask Connect.");
     metaMaskClient=await createEVMClient({
      dapp:{name:"Sendero Salvaje",url:location.href,iconUrl:new URL("icon.svg",location.href).href},
-     api:{supportedNetworks:{[EXPECTED_CHAIN_ID]:"https://sepolia.base.org"}}
+     api:{supportedNetworks:{[EXPECTED_CHAIN_ID]:"https://mainnet.base.org"}}
     });
    }
    const result=await metaMaskClient.connect({chainIds:[EXPECTED_CHAIN_ID]});
@@ -1143,8 +1143,8 @@ creature.visible=false;scene.add(creature);arCreature=creature;arSession=await n
   }catch(e){
    if(e&&e.code===4902){
     try{
-     await provider.request({method:"wallet_addEthereumChain",params:[{chainId:EXPECTED_CHAIN_ID,chainName:NETWORK_LABEL,nativeCurrency:{name:"Ether",symbol:"ETH",decimals:18},rpcUrls:["https://sepolia.base.org"],blockExplorerUrls:["https://sepolia.basescan.org"]}]});
-    }catch(addError){walletStatus("No se pudo agregar Base Sepolia: "+(addError.message||"operación cancelada"),"warn");return}
+     await provider.request({method:"wallet_addEthereumChain",params:[{chainId:EXPECTED_CHAIN_ID,chainName:NETWORK_LABEL,nativeCurrency:{name:"Ether",symbol:"ETH",decimals:18},rpcUrls:["https://mainnet.base.org"],blockExplorerUrls:["https://basescan.org"]}]});
+    }catch(addError){walletStatus("No se pudo agregar Base Mainnet: "+(addError.message||"operación cancelada"),"warn");return}
    }else{
     walletStatus(e&&e.code===4001?"Cambio de red cancelado.":"No se pudo cambiar de red: "+(e&&e.message?e.message:"error desconocido"),"warn");return;
    }
