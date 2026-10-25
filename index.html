@@ -250,6 +250,54 @@ nav button{font-size:13px!important;padding:10px 4px!important;min-height:44px!i
 #enemyEmoji.monsterReady:after{content:"TOCÁ PARA ATACAR";display:block;margin-top:-3px;font-size:10px;font-weight:900;letter-spacing:2px;color:#ffb7a8;text-shadow:0 2px 8px #000;opacity:.9}
 #enemyEmoji:focus-visible{outline:2px solid #ffb7a8;outline-offset:4px;border-radius:14px}
  .installPanel{margin-top:2px;text-align:center;background:linear-gradient(145deg,#172c25,#0e1b19)!important;border:1px solid #42654c!important}.installPanel h2{margin:0 0 6px;font-size:17px}.installBtn{width:100%;margin-top:10px;min-height:48px;font-size:14px;letter-spacing:.25px}.installInfo{margin:7px 2px 0!important;font-size:12px!important;line-height:1.5}
+
+/* V37 — pulido visual, microinteracciones y transiciones suaves */
+:root{--mint:#a8f0c2;--aqua:#8be4d1;--gold:#f4d38b;--line:#35564a;--muted:#b1c7bd}
+body{background-color:#07110f!important;background-image:radial-gradient(ellipse at 8% 16%,#16463855 0,transparent 34%),radial-gradient(ellipse at 94% 42%,#153e3850 0,transparent 31%),radial-gradient(ellipse at 50% 0%,#294d36 0,transparent 40%),linear-gradient(180deg,#0a1714,#050b0d 78%)!important}
+body:before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(circle at 16% 32%,#8ee7bd0b 0 1px,transparent 2px),radial-gradient(circle at 79% 24%,#f4d38b12 0 1px,transparent 2px),radial-gradient(circle at 68% 78%,#8be4d10b 0 1px,transparent 2px);background-size:170px 190px,230px 250px,210px 230px;animation:ambientDrift 22s linear infinite}
+header,.panel{transition:border-color .28s ease,box-shadow .28s ease,background-color .28s ease}
+.panel{box-shadow:0 14px 34px #0003,inset 0 1px #d5ffe009!important}
+nav{box-shadow:0 8px 28px #0004}
+nav button{transition:transform .2s ease,background .25s ease,border-color .25s ease,box-shadow .25s ease!important}
+nav button.primary{box-shadow:0 0 0 1px #a8f0c222,inset 0 0 18px #a8f0c20b,0 4px 15px #6fdaa51c!important}
+button{transition:transform .18s cubic-bezier(.2,.8,.2,1),filter .2s ease,border-color .22s ease,box-shadow .22s ease!important;-webkit-tap-highlight-color:transparent}
+button:hover:not(:disabled){transform:translateY(-1px);filter:brightness(1.08);border-color:#9de5b5!important}
+button:active:not(:disabled){transform:translateY(1px) scale(.985);filter:brightness(1.04)}
+button:focus-visible{outline:2px solid var(--aqua);outline-offset:3px}
+.view-enter{animation:viewReveal .42s cubic-bezier(.2,.7,.2,1) both;transform-origin:50% 12%}
+.view-enter>h2{animation:headingReveal .48s ease both}
+.forestHero{isolation:isolate}
+.forestArtwork:before,.forestArtwork:after{content:"";position:absolute;z-index:1;pointer-events:none;border-radius:50%;background:#b8f3c7;box-shadow:0 0 8px 2px #b8f3c744,0 0 20px #8be4d133;width:3px;height:3px;top:35%;left:23%;animation:fireflyFloat 7s ease-in-out infinite}
+.forestArtwork:after{top:53%;left:72%;width:2px;height:2px;animation-delay:-3.5s;animation-duration:9s}
+.moon{animation:moonGlow 5s ease-in-out infinite}
+.forestMist{animation:mistFlow 12s ease-in-out infinite alternate}
+.trail{animation:trailGlow 5s ease-in-out infinite}
+.heroEyebrow{color:#c1f0c3!important}
+.heroCopy h2 em{color:#bceab0!important;text-shadow:0 0 24px #a8f0c21c}
+.heroTopline span,.heroFooter span{backdrop-filter:blur(8px);transition:border-color .25s ease,background .25s ease}
+.stat,.pill,.quest,.notice,.craftCard,.skillCard,.achievementRow{transition:border-color .25s ease,background .25s ease,transform .25s ease}
+.stat:focus-within,.quest:hover{border-color:#50765d!important}
+.track .fill,.streakTrack #streakFill,.hpbar .enemyfill{transition:width .42s cubic-bezier(.22,.8,.25,1),filter .25s ease}
+.zoneBtn{transition:transform .2s ease,border-color .2s ease,filter .2s ease,background .25s ease!important}
+.zoneBtn.active{box-shadow:0 0 0 1px #a8f0c222,inset 0 1px #ffffff12,0 0 22px #8be4d10b!important}
+#enemyPanel .scene{animation:encounterReveal .48s cubic-bezier(.16,.8,.3,1) both}
+#enemyPanel .scene:after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(115deg,transparent 20%,#ffffff09 48%,transparent 70%);transform:translateX(-110%);animation:sceneSheen 1.2s .2s ease-out both}
+#enemyPanel .enemy svg{transition:filter .2s ease}
+#enemyEmoji.monsterReady:active{filter:drop-shadow(0 0 28px #ff7c6b99) brightness(1.2)!important}
+.gameToast{backdrop-filter:blur(14px);border-color:#8de5ae;box-shadow:0 14px 38px #0008,0 0 24px #8be4d10b}
+.badgeItem{transition:background .25s ease,border-color .25s ease,box-shadow .25s ease}
+.rarity-rara{box-shadow:0 0 18px #36bff51c!important}
+.rarity-legendaria{box-shadow:0 0 20px #f6c74b24!important}
+@keyframes viewReveal{from{opacity:0;transform:translateY(9px) scale(.995);filter:blur(2px)}to{opacity:1;transform:translateY(0) scale(1);filter:blur(0)}}
+@keyframes headingReveal{from{opacity:.55;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+@keyframes ambientDrift{from{background-position:0 0,0 0,0 0}to{background-position:170px -190px,-230px 250px,210px -230px}}
+@keyframes fireflyFloat{0%,100%{transform:translate(0,0);opacity:.25}30%{transform:translate(15px,-12px);opacity:.9}65%{transform:translate(-9px,-25px);opacity:.55}}
+@keyframes moonGlow{0%,100%{box-shadow:0 0 30px #e8e8b655,0 0 95px #c7e5a522}50%{box-shadow:0 0 38px #e8e8b677,0 0 115px #c7e5a533}}
+@keyframes mistFlow{from{transform:translateX(-4%) scaleX(.95);opacity:.6}to{transform:translateX(5%) scaleX(1.05);opacity:1}}
+@keyframes trailGlow{0%,100%{opacity:.45}50%{opacity:.9}}
+@keyframes encounterReveal{from{opacity:.6;transform:scale(.975)}to{opacity:1;transform:scale(1)}}
+@keyframes sceneSheen{to{transform:translateX(110%)}}
+@media(prefers-reduced-motion:reduce){body:before,.view-enter,.view-enter>h2,.forestArtwork:before,.forestArtwork:after,.moon,.forestMist,.trail,#enemyPanel .scene,#enemyPanel .scene:after{animation:none!important}button,.stat,.pill,.quest,.notice,.craftCard,.skillCard,.achievementRow,.track .fill,.streakTrack #streakFill,.hpbar .enemyfill{transition:none!important}}
 </style>
 </head>
 <body>
@@ -429,7 +477,7 @@ function monsterIllustration(name){
  return '<svg viewBox="0 0 240 210" role="img" aria-label="Slime salvaje"><defs><radialGradient id="slime" cx=".28" cy=".16" r=".85"><stop stop-color="#e1ffd0"/><stop offset=".25" stop-color="#8cf29a"/><stop offset=".65" stop-color="#27b969"/><stop offset="1" stop-color="#075b3c"/></radialGradient><linearGradient id="slimeSpike" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff3a6"/><stop offset="1" stop-color="#8ddda0"/></linearGradient></defs><ellipse cx="120" cy="183" rx="69" ry="11" fill="#020907" opacity=".48"/><path d="M43 164 Q34 145 50 125 L64 91 Q69 72 86 91 L99 68 L116 87 L138 63 L150 89 L173 83 Q190 89 190 116 L199 146 Q198 171 173 175 L66 175 Q48 174 43 164Z" fill="url(#slime)" stroke="#baffc0" stroke-width="3"/><path d="M75 91 L81 48 L104 77Z M134 77 L160 43 L160 91Z" fill="url(#slimeSpike)" stroke="#caffc7" stroke-width="3"/><ellipse cx="91" cy="119" rx="14" ry="19" fill="#f8fff2"/><ellipse cx="148" cy="119" rx="14" ry="19" fill="#f8fff2"/><ellipse cx="94" cy="123" rx="6" ry="11" fill="#10291d"/><ellipse cx="145" cy="123" rx="6" ry="11" fill="#10291d"/><circle cx="96" cy="118" r="3" fill="#fff"/><circle cx="147" cy="118" r="3" fill="#fff"/><path d="M101 145 Q120 161 139 144" fill="none" stroke="#063f2a" stroke-width="7" '+common+'/><path d="M58 148 Q39 151 34 136 M181 143 Q202 145 207 128" fill="none" stroke="#50d782" stroke-width="13" '+common+'/><ellipse cx="70" cy="100" rx="9" ry="5" fill="#eaffdf" opacity=".8"/></svg>';
 }
 function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
-function view(name){for(const n of ["explore","fight","bag"]){$(n+"View").classList.toggle("hidden",n!==name);$("tab"+({explore:"Explore",fight:"Fight",bag:"Bag"}[n])).classList.toggle("primary",n===name)}}
+function view(name){for(const n of ["explore","fight","bag"]){const panel=$(n+"View");const active=n===name;panel.classList.toggle("hidden",!active);$("tab"+({explore:"Explore",fight:"Fight",bag:"Bag"}[n])).classList.toggle("primary",active);if(active){panel.classList.remove("view-enter");void panel.offsetWidth;panel.classList.add("view-enter")}}}
 $("tabExplore").onclick=()=>view("explore");$("tabFight").onclick=()=>view("fight");$("tabBag").onclick=()=>view("bag");$("goExploreBtn").onclick=()=>view("explore");
 $("bossBtn").onclick=()=>{if(state.enemy||state.hp<=0||state.level<Math.max(3,(zones.find(z=>z.id===state.zone)||zones[0]).level))return;const e=createBossEncounter();state.enemy={...e};state.enemyHp=e.hp;registerDiscovery(e);$("combatLog").textContent="¡JEFE ÉPICO! "+e.name+" bloquea el camino. Prepará tus mejores ataques.";render();view("fight")};
 $("searchBtn").onclick=()=>{if(state.hp<=0){alert("Recuperá salud antes de seguir.");view("fight");return}if(state.enemy){view("fight");return}const e=createEncounter();state.enemy={...e};state.enemyHp=e.hp;registerDiscovery(e);$("combatLog").textContent="¡Apareció "+e.name+"! Elegí tu acción.";render();view("fight")};
