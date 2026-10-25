@@ -5,6 +5,7 @@ on:
     paths:
       - "contracts/**"
       - "test/**"
+      - "script/**"
       - "foundry.toml"
       - ".github/workflows/contract-tests.yml"
   push:
