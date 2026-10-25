@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#101b25">
+<meta name="description" content="Sendero Salvaje: una aventura móvil para explorar y cazar monstruos.">
+<link rel="manifest" href="manifest.json">
+<title>Sendero Salvaje — Cazamonstruos</title>
+<style>
+:root{color-scheme:dark;--bg:#101b25;--panel:#1c2b36;--line:#35464c;--mint:#8ce3b0;--gold:#d8bd68;--text:#f4f7f6;--muted:#a9bdc6;--red:#ec7777}
+*{box-sizing:border-box}body{margin:0;background:#0b141b;color:var(--text);font:16px/1.4 system-ui,-apple-system,Segoe UI,sans-serif}
+main{max-width:620px;margin:auto;padding:14px 14px calc(24px + env(safe-area-inset-bottom));display:grid;gap:12px}
+header,.panel{background:var(--bg);border:1px solid var(--line);border-radius:20px;padding:16px}
+.brand{display:flex;gap:12px;align-items:center}.logo{width:56px;height:56px;border-radius:16px;background:#253d3c;display:grid;place-items:center;font-size:30px}
+h1{font-size:20px;margin:0;letter-spacing:.5px}h2{font-size:19px;margin:0 0 12px}h3{font-size:15px;margin:0;color:var(--muted)}p{margin:6px 0;color:var(--muted)}.small{font-size:13px;color:var(--muted)}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}.stat{background:var(--panel);padding:12px;border-radius:12px}.stat strong{display:block;font-size:19px;margin:3px 0 7px}
+.track{height:7px;background:#40505a;border-radius:20px;overflow:hidden}.fill{height:100%;background:var(--mint);width:100%;transition:width .2s}.xpfill{background:var(--gold)}
+.pills{display:flex;gap:8px;margin-top:10px}.pill{flex:1;text-align:center;background:var(--panel);padding:8px;border-radius:10px;font-size:14px}
+nav{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}button{font:inherit;cursor:pointer;border:1px solid #4b626b;border-radius:12px;padding:12px 10px;background:#213641;color:var(--text);font-weight:650}button.primary{background:#8ce3b0;color:#10241c;border-color:#8ce3b0}button:disabled{opacity:.4;cursor:not-allowed}.actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}.actions button:last-child:nth-child(odd){grid-column:1/-1}
+.scene{background:linear-gradient(155deg,#18392f,#142923 52%,#101b25);border-radius:16px;padding:16px;text-align:center;overflow:hidden}.sceneEmoji{font-size:68px;line-height:1.5}.enemy{font-size:64px}.hpbar{background:#46565a;height:9px;border-radius:12px;overflow:hidden;margin:7px 0}.enemyfill{height:100%;background:var(--red)}.hidden{display:none!important}.notice{border-radius:12px;background:#1c2b36;padding:12px;font-size:13px;color:#c7d5d8}.ok{color:var(--mint)}.warn{color:#ffd28c}video{width:100%;max-height:55vh;background:#05090c;border-radius:14px;object-fit:cover}.cameraWrap{position:relative}.overlayMonster{position:absolute;top:18%;left:50%;transform:translateX(-50%);font-size:74px;text-shadow:0 0 24px #8ce3b0;animation:float 2s ease-in-out infinite}@keyframes float{50%{transform:translate(-50%,-10px)}}.row{display:flex;justify-content:space-between;gap:8px;align-items:center}.item{padding:10px 0;border-bottom:1px solid var(--line)}.item:last-child{border:0}
+</style>
+</head>
+<body>
+<main>
+<header>
+ <div class="brand"><div class="logo">🌲</div><div><h1>SENDERO SALVAJE</h1><div class="small">Cazamonstruos · Primera versión web</div><div class="small ok" id="saveStatus">Progreso guardado en este dispositivo</div></div></div>
+ <div class="stats">
+  <div class="stat"><span class="small">❤️ Salud</span><strong id="hpText">100/100</strong><div class="track"><div id="hpFill" class="fill"></div></div></div>
+  <div class="stat"><span class="small">✨ Experiencia</span><strong id="xpText">0/100 XP</strong><div class="track"><div id="xpFill" class="fill xpfill"></div></div></div>
+ </div>
+ <div class="pills"><div class="pill">🪙 <b id="goldText">0</b> monedas</div><div class="pill">🧪 <b id="potionsText">2</b> pociones</div><div class="pill">Nivel <b id="levelText">1</b></div></div>
+</header>
+<nav>
+ <button id="tabExplore" class="primary">🌲 Explorar</button><button id="tabFight">⚔️ Combate</button><button id="tabBag">🎒 Mochila</button>
+</nav>
+<section class="panel" id="exploreView">
+ <h2>Exploración</h2>
+ <div class="scene"><div class="sceneEmoji">🌲🌌🌲</div><h2>El bosque encantado</h2><p>Explorá para encontrar criaturas y conseguir recompensas.</p></div>
+ <div class="actions" style="margin-top:12px"><button class="primary" id="searchBtn">🔎 Buscar monstruos</button><button id="gpsBtn">📍 Activar GPS</button><button id="cameraBtn">📷 Abrir cámara</button></div>
+ <div id="gpsInfo" class="notice" style="margin-top:10px">GPS apagado. La búsqueda funciona en modo de demostración.</div>
+ <div id="cameraPanel" class="hidden" style="margin-top:12px">
+  <div class="cameraWrap"><video id="cameraVideo" autoplay muted playsinline></video><div id="cameraMonster" class="overlayMonster hidden">👾</div></div>
+  <div class="notice" style="margin-top:8px">Vista de cámara experimental. El monstruo es una superposición de prueba, no una detección real del entorno.</div>
+  <button id="closeCameraBtn" style="width:100%;margin-top:8px">Cerrar cámara</button>
+ </div>
+ <p class="small" id="exploreNote">Monstruos derrotados: 0</p>
+</section>
+<section class="panel hidden" id="fightView">
+ <h2>Combate por turnos</h2><div id="noEnemy" class="scene"><div class="sceneEmoji">🛡️</div><h2>No hay ningún enemigo</h2><p>Explorá para encontrar un monstruo y comenzar un combate.</p><button id="goExploreBtn" class="primary">Volver a explorar</button></div>
+ <div id="enemyPanel" class="hidden">
+  <div class="scene"><div id="enemyEmoji" class="enemy">🟢</div><h2 id="enemyName">Slime salvaje</h2><div class="small" id="enemyHpText"></div><div class="hpbar"><div id="enemyFill" class="enemyfill"></div></div></div>
+  <p id="combatLog" style="margin:12px 0">¡Un monstruo apareció!</p>
+  <div class="actions"><button id="attackBtn" class="primary">⚔️ Atacar</button><button id="healBtn">🧪 Usar poción</button><button id="fleeBtn">🏃 Huir</button></div>
+ </div>
+ <div id="recoverPanel" class="hidden"><p>Tu cazador está agotado.</p><button id="recoverBtn" class="primary">Recuperar salud</button></div>
+</section>
+<section class="panel hidden" id="bagView">
+ <h2>Tu mochila</h2><div class="item row"><div><b>🧪 Poción de salud</b><div class="small">Recupera 35 puntos de salud.</div></div><b id="bagPotions">×2</b></div>
+ <button id="buyPotionBtn" style="width:100%;margin-top:12px">Comprar poción · 10 monedas</button>
+ <h2 style="margin-top:20px">Tesoros y trofeos</h2><div id="itemsList"><p>Todavía no encontraste objetos.</p></div>
+ <button id="resetBtn" style="width:100%;margin-top:16px">Reiniciar aventura</button>
+</section>
+<div class="notice"><b>🚶 Seguridad primero.</b> Detenete en un lugar seguro antes de mirar la pantalla o combatir. No cruces calles ni camines mirando el teléfono. El GPS se usa para la ubicación del juego; esta versión no envía tu ubicación a un servidor.</div>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+const enemies=[
+ {name:"Slime salvaje",emoji:"🟢",hp:32,atk:7,xp:20,gold:8,drop:"Gota de slime"},
+ {name:"Lobo sombrío",emoji:"🐺",hp:48,atk:10,xp:35,gold:14,drop:"Colmillo sombrío"},
+ {name:"Gólem antiguo",emoji:"🗿",hp:70,atk:13,xp:55,gold:22,drop:"Fragmento de piedra"}
+];
+const initial=()=>({hp:100,xp:0,level:1,potions:2,gold:0,defeated:0,items:[],enemy:null,enemyHp:0});
+let state;
+try{state={...initial(),...JSON.parse(localStorage.getItem("senderoSalvajeSave")||"{}")}}catch{state=initial()}
+let cameraStream=null,watchId=null;
+function save(){localStorage.setItem("senderoSalvajeSave",JSON.stringify(state));$("saveStatus").textContent="✓ Progreso guardado en este dispositivo"}
+function render(){
+ $("hpText").textContent=state.hp+"/100";$("hpFill").style.width=state.hp+"%";
+ $("xpText").textContent=state.xp+"/"+(state.level*100)+" XP";$("xpFill").style.width=Math.min(100,state.xp/(state.level*100)*100)+"%";
+ $("goldText").textContent=state.gold;$("potionsText").textContent=state.potions;$("levelText").textContent=state.level;$("bagPotions").textContent="×"+state.potions;
+ $("exploreNote").textContent="Monstruos derrotados: "+state.defeated;
+ $("noEnemy").classList.toggle("hidden",!!state.enemy||state.hp<=0);$("enemyPanel").classList.toggle("hidden",!state.enemy);$("recoverPanel").classList.toggle("hidden",state.hp>0);
+ if(state.enemy){$("enemyEmoji").textContent=state.enemy.emoji;$("enemyName").textContent=state.enemy.name;$("enemyHpText").textContent="❤️ "+state.enemyHp+"/"+state.enemy.hp+" HP";$("enemyFill").style.width=Math.max(0,state.enemyHp/state.enemy.hp*100)+"%";$("healBtn").disabled=state.potions<=0||state.hp>=100;$("attackBtn").disabled=state.hp<=0}
+ $("itemsList").innerHTML=state.items.length?state.items.map(x=>'<div class="item">'+escapeHtml(x)+'</div>').join(""):"<p>Todavía no encontraste objetos. Derrotá monstruos para conseguir trofeos.</p>";
+ $("buyPotionBtn").disabled=state.gold<10;
+ save();
+}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function view(name){for(const n of ["explore","fight","bag"]){$(n+"View").classList.toggle("hidden",n!==name);$("tab"+({explore:"Explore",fight:"Fight",bag:"Bag"}[n])).classList.toggle("primary",n===name)}}
+$("tabExplore").onclick=()=>view("explore");$("tabFight").onclick=()=>view("fight");$("tabBag").onclick=()=>view("bag");$("goExploreBtn").onclick=()=>view("explore");
+$("searchBtn").onclick=()=>{if(state.hp<=0){alert("Recuperá salud antes de seguir.");view("fight");return}if(state.enemy){view("fight");return}const e=enemies[Math.floor(Math.random()*enemies.length)];state.enemy={...e};state.enemyHp=e.hp;$("combatLog").textContent="¡Apareció "+e.name+"! Elegí tu acción.";render();view("fight")};
+function win(){const e=state.enemy;state.xp+=e.xp;state.gold+=e.gold;state.defeated++;state.items.unshift("🏆 "+e.drop+" — "+e.name);state.enemy=null;state.enemyHp=0;while(state.xp>=state.level*100){state.xp-=state.level*100;state.level++;state.hp=Math.min(100,state.hp+20);state.gold+=10;alert("¡Subiste al nivel "+state.level+"! +20 salud y +10 monedas.")}$("combatLog").textContent="¡Victoria! Ganaste "+e.xp+" XP y "+e.gold+" monedas. Conseguí: "+e.drop;render()}
+$("attackBtn").onclick=()=>{if(!state.enemy||state.hp<=0)return;const damage=12+Math.floor(Math.random()*9);state.enemyHp=Math.max(0,state.enemyHp-damage);if(state.enemyHp===0){win();return}const hurt=Math.max(1,state.enemy.atk-Math.floor(Math.random()*4));state.hp=Math.max(0,state.hp-hurt);$("combatLog").textContent="Hiciste "+damage+" de daño. "+state.enemy.name+" te hizo "+hurt+" de daño.";if(state.hp===0)$("combatLog").textContent+=" Te quedaste sin salud.";render()};
+$("healBtn").onclick=()=>{if(!state.enemy||state.potions<=0||state.hp>=100)return;state.potions--;state.hp=Math.min(100,state.hp+35);const hurt=Math.max(1,state.enemy.atk-3);state.hp=Math.max(0,state.hp-hurt);$("combatLog").textContent="Usaste una poción; el enemigo te hizo "+hurt+" de daño.";render()};
+$("fleeBtn").onclick=()=>{state.enemy=null;state.enemyHp=0;$("combatLog").textContent="Escapaste sin recompensas.";render();view("explore")};
+$("recoverBtn").onclick=()=>{state.hp=100;render()};
+$("buyPotionBtn").onclick=()=>{if(state.gold>=10){state.gold-=10;state.potions++;render()}};
+$("resetBtn").onclick=()=>{if(confirm("¿Borrar el progreso de esta aventura en este dispositivo?")){state=initial();render();view("explore")}};
+$("gpsBtn").onclick=()=>{if(!navigator.geolocation){$("gpsInfo").textContent="Este navegador no ofrece geolocalización.";return}if(watchId!==null){navigator.geolocation.clearWatch(watchId);watchId=null;$("gpsBtn").textContent="📍 Activar GPS";$("gpsInfo").textContent="GPS apagado.";return}$("gpsInfo").textContent="Solicitando permiso de ubicación…";watchId=navigator.geolocation.watchPosition(pos=>{$("gpsInfo").innerHTML='<span class="ok">GPS activo.</span> Precisión aproximada: '+Math.round(pos.coords.accuracy)+' m. Ubicación usada solo en este dispositivo.';$("gpsBtn").textContent="📍 Desactivar GPS"},err=>{$("gpsInfo").textContent="No se pudo obtener la ubicación: "+({1:"permiso denegado",2:"posición no disponible",3:"se agotó el tiempo"}[err.code]||err.message);watchId=null},{enableHighAccuracy:true,maximumAge:10000,timeout:15000})};
+$("cameraBtn").onclick=async()=>{if(!navigator.mediaDevices?.getUserMedia){alert("La cámara requiere HTTPS y un navegador compatible. Publicá esta web en una dirección segura.");return}try{cameraStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:"environment"}},audio:false});$("cameraVideo").srcObject=cameraStream;$("cameraPanel").classList.remove("hidden");$("cameraMonster").classList.toggle("hidden",!state.enemy);$("cameraBtn").textContent="📷 Cámara abierta"}catch(e){alert("No se pudo abrir la cámara. Revisá los permisos del navegador y que la página esté en HTTPS. ("+e.message+")")}};
+$("closeCameraBtn").onclick=()=>{if(cameraStream){cameraStream.getTracks().forEach(t=>t.stop());cameraStream=null}$("cameraVideo").srcObject=null;$("cameraPanel").classList.add("hidden");$("cameraBtn").textContent="📷 Abrir cámara"};
+if("serviceWorker" in navigator && location.protocol!=="file:"){navigator.serviceWorker.register("./sw.js").catch(()=>{})}
+render();
+</script>
+</body>
+</html>
