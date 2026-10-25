@@ -197,7 +197,8 @@ nav button{font-size:13px!important;padding:10px 4px!important;min-height:44px!i
 .forestArtwork{position:absolute;z-index:-1;inset:0;overflow:hidden}
 .moon{position:absolute;top:53px;right:47px;width:65px;height:65px;border-radius:50%;background:#e8e8b6;box-shadow:0 0 30px #e8e8b655,0 0 95px #c7e5a522}
 .mountain{position:absolute;bottom:73px;width:120%;height:190px;left:-10%;clip-path:polygon(0 100%,0 72%,16% 40%,26% 64%,43% 18%,55% 57%,70% 30%,85% 66%,100% 43%,100% 100%);background:#16382d}
-.mountainBack{bottom:93px;background:#41634b;opacity:.72;transform:scale(1.12)}.mountainFront{background:#0b211a;bottom:52px;transform:scale(1.25)}
+.mountainBack{bottom:93px;background:#41634b;opacity:.72;transform:scale(1.12)}
+.mountainFront{background:#0b211a;bottom:52px;transform:scale(1.25)}
 .pine{position:absolute;bottom:52px;width:0;height:0;border-left:55px solid transparent;border-right:55px solid transparent;border-bottom:190px solid #0a2119;filter:drop-shadow(0 0 1px #7aa17a55)}
 .pine:after{content:"";position:absolute;top:65px;left:-38px;width:0;height:0;border-left:38px solid transparent;border-right:38px solid transparent;border-bottom:130px solid #0d2b20}
 .pineOne{left:-18px;transform:scale(1.12);transform-origin:bottom}
@@ -396,7 +397,8 @@ button.primary,nav button.primary{
 nav button:not(.primary){
   background:linear-gradient(145deg,#18392d,#10231e)!important;border:1px solid #3c7657!important
 }
-.quest,.notice,.craftCard,.skillCard,.achievementRow{  border-color:#3c775677!important;transition:transform .22s ease,border-color .22s ease,background .22s ease!important
+.quest,.notice,.craftCard,.skillCard,.achievementRow{
+  border-color:#3c775677!important;transition:transform .22s ease,border-color .22s ease,background .22s ease!important
 }
 .quest:hover,.craftCard:hover,.skillCard:hover,.achievementRow:hover{
   transform:translateY(-2px);border-color:#66dca0aa!important
@@ -595,7 +597,8 @@ h2,h3,.scene h2{
  letter-spacing:-.025em!important;margin:2px 0 15px!important
 }
 #exploreView>h2:after,#fightView>h2:after,#bagView>h2:after{
- background:linear-gradient(90deg,#b69a76,#b69a7625,transparent)!important; height:1px!important;bottom:-8px!important
+ background:linear-gradient(90deg,#b69a76,#b69a7625,transparent)!important;
+ height:1px!important;bottom:-8px!important
 }
 .small{color:#b5b1a8}
 .forestHero{
@@ -1021,7 +1024,8 @@ halo.position.y=.02;halo.rotation.x=Math.PI/2;creature.add(halo);arAnimated.push
 for(let i=0;i<(isBoss?18:10);i++){
  const p=new THREE.Mesh(new THREE.SphereGeometry(isBoss?.012:.008,6,5),new THREE.MeshBasicMaterial({color:i%3===0?0xffd47b:glowMat.color,transparent:true,opacity:.75}));
  const angle=i*2.399;const radius=.23+(i%4)*.035;
- p.position.set(Math.cos(angle)*radius,-.12+(i%5)*.07,Math.sin(angle)*radius); creature.add(p);arParticles.push({mesh:p,angle,radius,phase:i*.7,speed:.55+(i%4)*.16});
+ p.position.set(Math.cos(angle)*radius,-.12+(i%5)*.07,Math.sin(angle)*radius);
+ creature.add(p);arParticles.push({mesh:p,angle,radius,phase:i*.7,speed:.55+(i%4)*.16});
 }
 
 creature.visible=false;scene.add(creature);arCreature=creature;arSession=await navigator.xr.requestSession("immersive-ar",{requiredFeatures:[],optionalFeatures:["hit-test","dom-overlay"],domOverlay:{root:$("arPanel")}});arSession.addEventListener("end",cleanupAR,{once:true});await arRenderer.xr.setSession(arSession);try{const viewer=await arSession.requestReferenceSpace("viewer");arHitSource=await arSession.requestHitTestSource({space:viewer})}catch(e){arHitSource=null}let arFrameCount=0;arRenderer.setAnimationLoop((time,frame)=>{if(frame){arFrameCount++;const ref=arRenderer.xr.getReferenceSpace();if(arHitSource&&!arPlaced){const hits=frame.getHitTestResults(arHitSource);if(hits.length){const pose=hits[0].getPose(ref);if(pose){const surfaceMatrix=new THREE.Matrix4().fromArray(pose.transform.matrix);creature.position.setFromMatrixPosition(surfaceMatrix);creature.quaternion.setFromRotationMatrix(surfaceMatrix);creature.position.y+=.24;creature.visible=true;arPlaced=true;registerDiscovery(arEncounter);haptic([25,20,45]);reticle.visible=false;$("arFightBtn").disabled=false;$("arStatus").textContent=arEncounter.name+" ("+arEncounter.rarity+") apareció sobre una superficie detectada y quedó anclado al entorno."}}}if(!arPlaced&&arFrameCount>180){const xrCamera=arRenderer.xr.getCamera(camera);xrCamera.updateMatrixWorld(true);const forward=new THREE.Vector3();const origin=new THREE.Vector3();xrCamera.getWorldDirection(forward);xrCamera.getWorldPosition(origin);creature.position.copy(origin).addScaledVector(forward,1.45);creature.position.y-=.12;creature.quaternion.identity();creature.visible=true;arPlaced=true;registerDiscovery(arEncounter);haptic([25,20,45]);$("arFightBtn").disabled=false;$("arStatus").textContent=arEncounter.name+" ("+arEncounter.rarity+") apareció delante tuyo. No se detectó una superficie; quedó fijado en el espacio."}if(!arPlaced&&arHitSource){const hits=frame.getHitTestResults(arHitSource);if(!hits.length){reticle.visible=false;$("arStatus").textContent="Buscando el suelo automáticamente…"}}}if(creature.visible){const t=time*.001;creature.rotation.y+=isBoss?.009:.005;body.rotation.z=Math.sin(t*1.8)*.025;body.position.y=Math.sin(t*2.2)*.018;for(const part of arAnimated){if(part.kind==="limb")part.mesh.rotation.z=part.side*(.22+Math.sin(t*4+part.phase)*.12);else if(part.kind==="rune")part.mesh.rotation.z+=.006;else if(part.kind==="halo")part.mesh.rotation.z+=.012}for(const wing of arWings){wing.mesh.rotation.z=wing.base+Math.sin(t*5+wing.side)*.22;wing.mesh.rotation.y=wing.side*(.1+Math.sin(t*3)*.08)}for(const p of arParticles){const a=p.angle+t*p.speed;p.mesh.position.x=Math.cos(a)*p.radius;p.mesh.position.z=Math.sin(a)*p.radius;p.mesh.position.y=-.12+((Math.sin(t*1.7+p.phase)+1)*.5)*.34;p.mesh.material.opacity=.35+((Math.sin(t*2+p.phase)+1)*.5)*.5}floorShadow.material.opacity=.28+((Math.sin(t*2)+1)*.5)*.14}arRenderer.render(scene,camera)});$("arStatus").textContent="Buscando el suelo para colocar la criatura automáticamente. No hace falta tocar la pantalla."}catch(e){const detail=(e.name?e.name+": ":"")+(e.message||"falló el inicio de realidad aumentada");if(arSession){const failedSession=arSession;failedSession.removeEventListener("end",cleanupAR);arSession=null;try{await failedSession.end()}catch{}}if(arRenderer){arRenderer.setAnimationLoop(null);arRenderer.dispose();arRenderer.domElement.remove();arRenderer=null}arHitSource=null;arCreature=null;arEncounter=null;arPlaced=false;$("arPanel").classList.remove("hidden");$("arFightBtn").disabled=true;$("arStatus").textContent="No se pudo iniciar realidad aumentada ("+detail+"). Copiá este mensaje para diagnosticar."; $("gpsInfo").textContent="La realidad aumentada requiere compatibilidad con WebXR/ARCore. Detalle: "+detail;}}function cleanupAR(){if(arRenderer){arRenderer.setAnimationLoop(null);arRenderer.dispose();arRenderer.domElement.remove();arRenderer=null}arSession=null;arHitSource=null;arCreature=null;arEncounter=null;arPlaced=false;$("arPanel").classList.add("hidden");$("arFightBtn").disabled=true}function stopSpatialAR(){if(arSession){const s=arSession;arSession=null;s.end().catch(()=>cleanupAR())}else cleanupAR()}window.addEventListener("pagehide",()=>{stopSpatialAR();if(cameraStream)cameraStream.getTracks().forEach(t=>t.stop());if(watchId!==null&&navigator.geolocation)navigator.geolocation.clearWatch(watchId)});if("serviceWorker" in navigator && location.protocol!=="file:"){navigator.serviceWorker.register("./sw.js",{updateViaCache:"none"}).then(reg=>reg.update()).catch(()=>{})}
