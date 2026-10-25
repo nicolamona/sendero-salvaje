@@ -83,7 +83,8 @@ export default {
 
     if (url.pathname === "/health" && request.method === "GET") {
       const ready = Boolean(env.DB && env.BASE_RPC_URL && env.VAULT_ADDRESS && env.GAME_ORIGIN);
-      return json({ ok: true, ready, mode: "read-only-verifier", chainId: 8453, realDepositsEnabled: false }, 200, corsOrigin);
+      const configuredChainId = Number(env.CHAIN_ID ?? "8453");
+      return json({ ok: true, ready, mode: "read-only-verifier", chainId: configuredChainId, realDepositsEnabled: false }, 200, corsOrigin);
     }
 
     if (url.pathname !== "/v1/deposits/verify" || request.method !== "POST") {
