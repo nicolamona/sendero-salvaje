@@ -4,8 +4,8 @@
   "description": "Aventura móvil de exploración y combate por turnos.",
   "start_url": "./",
   "display": "standalone",
-  "background_color": "#07110f",
-  "theme_color": "#10271d",
+  "background_color": "#0a0d18",
+  "theme_color": "#0a0d18",
   "lang": "es",
   "icons": [
     {
