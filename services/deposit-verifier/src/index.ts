@@ -172,7 +172,8 @@ export default {
             return null;
           }
         })
-        .filter((entry: any) => entry && entry.player === wallet && entry.amount > 0n);
+        .filter((entry): entry is { log: any; player: string; amount: bigint; newAvailableBalance: bigint } =>
+          Boolean(entry && entry.player === wallet && entry.amount > 0n));
 
       if (decoded.length !== 1) {
         return json({ ok: false, error: decoded.length ? "AMBIGUOUS_DEPOSIT_LOGS" : "DEPOSIT_EVENT_NOT_FOUND" }, 422, corsOrigin);
