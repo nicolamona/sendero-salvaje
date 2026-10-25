@@ -1,4 +1,4 @@
-const CACHE = "sendero-salvaje-v19";
+const CACHE = "sendero-salvaje-v20";
 const FILES = ["./", "./index.html", "./manifest.json"];
 self.addEventListener("install", e => e.waitUntil(caches.open(CACHE).then(c => c.addAll(FILES)).then(() => self.skipWaiting())));
 self.addEventListener("activate", e => e.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))).then(() => self.clients.claim())));
