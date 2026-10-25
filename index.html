@@ -52,6 +52,15 @@ nav{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}button{font:inherit
 @keyframes shadowPulse{0%,100%{transform:scaleX(1);opacity:.8}50%{transform:scaleX(.75);opacity:.5}}
 @keyframes promptPulse{from{opacity:.6}to{opacity:1}}
 @media(prefers-reduced-motion:reduce){.overlayMonster,.monsterBody,.monsterEye,.monsterMouth,.monsterArms i,.monsterFeet i,.monsterShadow,.monsterPrompt{animation:none}}
+/* Cámara clásica a pantalla completa en móvil */
+#cameraPanel:not(.hidden){position:fixed;inset:0;z-index:9999;margin:0!important;padding:calc(10px + env(safe-area-inset-top)) 10px calc(10px + env(safe-area-inset-bottom));background:#05090c;display:flex;flex-direction:column;gap:8px;overflow:auto}
+#cameraPanel .cameraWrap{flex:1;min-height:0;height:100%;border-radius:12px;display:flex;align-items:stretch}
+#cameraPanel #cameraVideo{position:absolute;inset:0;width:100%;height:100%;min-height:0;max-height:none;object-fit:cover;border-radius:0}
+#cameraPanel .overlayMonster{top:18%;max-height:55%;pointer-events:auto}
+#cameraPanel .cameraScanline,#cameraPanel .cameraAim{pointer-events:none}
+#cameraPanel>.notice{flex:0 0 auto;margin-top:0!important}
+#cameraPanel>.actions{flex:0 0 auto;margin-top:0!important}
+@media(max-height:520px){#cameraPanel{padding-top:calc(4px + env(safe-area-inset-top));padding-bottom:calc(4px + env(safe-area-inset-bottom));gap:5px}#cameraPanel>.notice{padding:6px;font-size:12px}#cameraPanel>.actions button{padding:8px}}
 .row{display:flex;justify-content:space-between;gap:8px;align-items:center}.item{padding:10px 0;border-bottom:1px solid var(--line)}.item:last-child{border:0}
 </style>
 </head>
