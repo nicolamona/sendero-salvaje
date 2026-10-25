@@ -158,7 +158,7 @@ export default {
       );
 
       const decoded = matchingLogs
-        .map((log: any) => {
+        .map((log: any): { log: any; player: string; amount: bigint; newAvailableBalance: bigint } | null => {
           try {
             const parsed = vaultInterface.parseLog({ topics: log.topics, data: log.data });
             if (!parsed) return null;
