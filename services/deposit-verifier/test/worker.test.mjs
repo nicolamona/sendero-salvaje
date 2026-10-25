@@ -27,11 +27,11 @@ function env() {
             return rows.get(key) ?? null;
           },
           async run() {
-            const [chain, hash, logIndex, blockNumber, bHash, player, wei, status, confirmations, firstSeen, updated] = values;
+            const [chain, hash, logIndex, blockNumber, bHash, player, wei, confirmations, firstSeen, updated] = values;
             rows.set([chain, hash, logIndex].join(":"), {
               chain_id: chain, tx_hash: hash, log_index: logIndex,
               block_number: blockNumber, block_hash: bHash, player, amount_wei: wei,
-              status, confirmations, first_seen_at: firstSeen, updated_at: updated
+              status: "finalized", confirmations, first_seen_at: firstSeen, updated_at: updated
             });
             return { success: true };
           }
