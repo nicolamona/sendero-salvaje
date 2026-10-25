@@ -175,7 +175,7 @@ button:active{transform:translateY(2px);box-shadow:0 1px 0 #09140f!important}
 
 /* V15 — nueva composición de aventura, no solo retoques de color */
 body{background:#07100e!important;background-image:radial-gradient(ellipse at 50% 0%,#244c35 0,transparent 38%),linear-gradient(180deg,#0a1714,#050b0d 78%)!important}
-main{max-width:720px!important;padding:10px 12px calc(30px + env(safe-area-inset-bottom))!important;gap:13px!important}
+main{position:relative;z-index:1;max-width:720px!important;padding:10px 12px calc(30px + env(safe-area-inset-bottom))!important;gap:13px!important}
 .installBtn{width:100%;margin-top:12px;min-height:43px;font-size:13px;letter-spacing:.2px}.installInfo{margin:5px 2px 0!important;font-size:11px!important}
 header{padding:17px!important;border-radius:23px 23px 16px 16px!important;background:linear-gradient(125deg,#19352a,#10221f 65%,#172a23)!important;border:1px solid #42654c!important}
 .brand{align-items:center}.logo{width:54px!important;height:54px!important;border-radius:18px!important;font-size:27px!important}
@@ -254,7 +254,7 @@ nav button{font-size:13px!important;padding:10px 4px!important;min-height:44px!i
 /* V37 — pulido visual, microinteracciones y transiciones suaves */
 :root{--mint:#a8f0c2;--aqua:#8be4d1;--gold:#f4d38b;--line:#35564a;--muted:#b1c7bd}
 body{background-color:#07110f!important;background-image:radial-gradient(ellipse at 8% 16%,#16463855 0,transparent 34%),radial-gradient(ellipse at 94% 42%,#153e3850 0,transparent 31%),radial-gradient(ellipse at 50% 0%,#294d36 0,transparent 40%),linear-gradient(180deg,#0a1714,#050b0d 78%)!important}
-body:before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(circle at 16% 32%,#8ee7bd0b 0 1px,transparent 2px),radial-gradient(circle at 79% 24%,#f4d38b12 0 1px,transparent 2px),radial-gradient(circle at 68% 78%,#8be4d10b 0 1px,transparent 2px);background-size:170px 190px,230px 250px,210px 230px;animation:ambientDrift 22s linear infinite}
+body:before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(circle at 16% 32%,#8ee7bd0b 0 1px,transparent 2px),radial-gradient(circle at 79% 24%,#f4d38b12 0 1px,transparent 2px),radial-gradient(circle at 68% 78%,#8be4d10b 0 1px,transparent 2px);background-size:170px 190px,230px 250px,210px 230px;animation:ambientDrift 22s linear infinite}
 header,.panel{transition:border-color .28s ease,box-shadow .28s ease,background-color .28s ease}
 .panel{box-shadow:0 14px 34px #0003,inset 0 1px #d5ffe009!important}
 nav{box-shadow:0 8px 28px #0004}
@@ -266,7 +266,7 @@ button:active:not(:disabled){transform:translateY(1px) scale(.985);filter:bright
 button:focus-visible{outline:2px solid var(--aqua);outline-offset:3px}
 .view-enter{animation:viewReveal .42s cubic-bezier(.2,.7,.2,1) both;transform-origin:50% 12%}
 .view-enter>h2{animation:headingReveal .48s ease both}
-.forestHero{isolation:isolate}
+.forestHero{isolation:isolate}.forestArtwork{z-index:0!important}.heroTopline,.heroFooter{position:relative;z-index:2}
 .forestArtwork:before,.forestArtwork:after{content:"";position:absolute;z-index:1;pointer-events:none;border-radius:50%;background:#b8f3c7;box-shadow:0 0 8px 2px #b8f3c744,0 0 20px #8be4d133;width:3px;height:3px;top:35%;left:23%;animation:fireflyFloat 7s ease-in-out infinite}
 .forestArtwork:after{top:53%;left:72%;width:2px;height:2px;animation-delay:-3.5s;animation-duration:9s}
 .moon{animation:moonGlow 5s ease-in-out infinite}
