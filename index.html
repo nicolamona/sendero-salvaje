@@ -108,6 +108,42 @@ button:active{transform:translateY(2px);box-shadow:0 1px 0 #0b171a}button:hover{
 @media(max-width:380px){main{padding-left:10px;padding-right:10px}.brand{gap:10px}.logo{width:48px;height:48px;font-size:26px}nav button{padding:10px 5px;font-size:13px}.stat{padding:10px}.stat strong{font-size:19px}}
 @media(prefers-reduced-motion:reduce){.enemy{animation:none}}
 
+
+/* Rediseño visible v14: interfaz de aventura y criaturas ilustradas */
+body{background:#07110f!important;background-image:radial-gradient(ellipse at 50% 0%,#27513a 0,transparent 42%),linear-gradient(180deg,#0b1917,#070e12 76%)!important}
+main{max-width:680px;gap:16px;padding:12px 12px calc(28px + env(safe-area-inset-bottom))}
+header,.panel{border-radius:22px!important;border:1px solid #416052!important;background:linear-gradient(145deg,#1a302b,#101e21 72%)!important;box-shadow:0 16px 38px #0005,inset 0 1px #c4ffdc12!important}
+header{padding:18px!important}
+.logo{width:60px;height:60px;background:linear-gradient(145deg,#396f4d,#142f27)!important;border:1px solid #75b88a!important;box-shadow:0 0 28px #68db9233}
+h1{font-size:20px!important;letter-spacing:1.8px!important}
+h2{font-size:20px!important}
+.stat{background:linear-gradient(145deg,#254039,#182a2a)!important;border:1px solid #3e6252!important;border-radius:15px!important}
+.stat strong{font-size:22px!important}
+.pill{background:#1b332c!important;border:1px solid #3a5a49!important;border-radius:12px!important;padding:10px 5px!important}
+nav{position:sticky;top:4px;z-index:20;padding:5px;background:#0b1715eF;border:1px solid #29483a;border-radius:17px;backdrop-filter:blur(12px)}
+nav button{border-radius:12px!important}
+button{border-radius:14px!important;min-height:46px;background:linear-gradient(180deg,#29473b,#1a302b)!important;border:1px solid #52765e!important;box-shadow:0 4px 0 #09140f,0 8px 18px #0003!important}
+button.primary{background:linear-gradient(135deg,#c2f6c9,#78dda0)!important;color:#10291b!important;border-color:#b5f2c3!important;box-shadow:0 4px 0 #36784d,0 8px 20px #72df9a22!important}
+button:active{transform:translateY(2px);box-shadow:0 1px 0 #09140f!important}
+.scene{padding:22px 16px!important;border:1px solid #4a7559!important;border-radius:20px!important;background:radial-gradient(ellipse at 50% 8%,#397b4b 0,transparent 50%),radial-gradient(ellipse at 50% 100%,#18392a 0,transparent 65%),linear-gradient(150deg,#1c3c2d,#101d1b 72%)!important;box-shadow:inset 0 1px #d4ffe018,0 12px 28px #0003!important}
+.sceneEmoji{font-size:66px!important;filter:drop-shadow(0 9px 12px #0007)}
+.quest,.notice{border-radius:15px!important;background:linear-gradient(120deg,#1d342b,#142422)!important;border:1px solid #365645!important}
+.enemy{display:grid;place-items:center;min-height:190px;font-size:0!important;line-height:1!important;filter:none!important;animation:none!important}
+.enemy svg{width:min(72vw,270px);height:205px;overflow:visible;filter:drop-shadow(0 18px 18px #0008);animation:creatureFloat 3s ease-in-out infinite}
+#enemyPanel .scene{overflow:hidden;position:relative}
+#enemyPanel .scene:before{content:"ENCUENTRO SALVAJE";display:inline-block;border:1px solid #608b6a;background:#071b13b8;border-radius:99px;padding:5px 10px;color:#bdf4c9;font-size:10px;font-weight:850;letter-spacing:2px;margin-bottom:8px}
+#enemyName{font-size:22px;letter-spacing:.3px}
+#enemyHpText{font-weight:750;color:#ffd1c8}
+.hpbar{height:11px!important;background:#3d4b43!important;border:1px solid #5b6c5d}
+.enemyfill{background:linear-gradient(90deg,#d64b52,#ff9b7c)!important;box-shadow:0 0 14px #ff6a5a55}
+#combatLog{border:1px solid #355344;border-left:4px solid #9ce9ae;border-radius:12px;background:#142720;padding:13px;color:#e6f5e9}
+#exploreView>h2:after,#fightView>h2:after,#bagView>h2:after{content:"";display:block;width:56px;height:3px;margin-top:8px;border-radius:9px;background:linear-gradient(90deg,#a6efb6,#3c8a5a)}
+.cameraWrap{border:1px solid #578568!important;border-radius:18px!important}
+.monsterNameTag{font-size:12px!important;padding:7px 13px!important;box-shadow:0 5px 18px #0006}
+.monsterPrompt{font-size:10px!important;padding:7px 12px!important}
+@keyframes creatureFloat{0%,100%{transform:translateY(0) rotate(-1deg)}50%{transform:translateY(-8px) rotate(1deg)}}
+@media(max-width:390px){.enemy{min-height:160px}.enemy svg{height:175px}header{padding:14px!important}.stat{padding:10px!important}}
+
 </style>
 </head>
 <body>
@@ -137,7 +173,7 @@ button:active{transform:translateY(2px);box-shadow:0 1px 0 #0b171a}button:hover{
 <section class="panel hidden" id="fightView">
  <h2>Combate por turnos</h2><div id="noEnemy" class="scene"><div class="sceneEmoji">🛡️</div><h2>No hay ningún enemigo</h2><p>Explorá para encontrar un monstruo y comenzar un combate.</p><button id="goExploreBtn" class="primary">Volver a explorar</button></div>
  <div id="enemyPanel" class="hidden">
-  <div class="scene"><div id="enemyEmoji" class="enemy">🟢</div><h2 id="enemyName">Slime salvaje</h2><div class="small" id="enemyHpText"></div><div class="hpbar"><div id="enemyFill" class="enemyfill"></div></div></div>
+  <div class="scene"><div id="enemyEmoji" class="enemy" aria-label="Ilustración del monstruo">🟢</div><h2 id="enemyName">Slime salvaje</h2><div class="small" id="enemyHpText"></div><div class="hpbar"><div id="enemyFill" class="enemyfill"></div></div></div>
   <p id="combatLog" style="margin:12px 0">¡Un monstruo apareció!</p>
   <div class="actions"><button id="attackBtn" class="primary">⚔️ Atacar</button><button id="healBtn">🧪 Usar poción</button><button id="fleeBtn">🏃 Huir</button></div>
  </div>
@@ -169,10 +205,17 @@ function render(){
  $("goldText").textContent=state.gold;$("potionsText").textContent=state.potions;$("levelText").textContent=state.level;$("bagPotions").textContent="×"+state.potions;
  $("exploreNote").textContent="Monstruos derrotados: "+state.defeated;$("questProgress").value=Math.min(3,state.defeated);$("questText").textContent=state.contractClaimed?"✅ Contrato completado: recompensa cobrada.":state.defeated>=3?"¡Contrato listo! Reclamá 50 monedas y una poción.":"Derrotá "+(3-Math.min(3,state.defeated))+" criatura(s) más para ganar 50 monedas y una poción.";if(state.defeated>=3&&!state.contractClaimed){$("questText").innerHTML="¡Contrato listo! <button id=\"claimQuestBtn\" class=\"primary\" style=\"margin-top:8px\">Cobrar recompensa</button>";$("claimQuestBtn").onclick=()=>{if(!state.contractClaimed&&state.defeated>=3){state.contractClaimed=true;state.gold+=50;state.potions++;render()}}}
  $("noEnemy").classList.toggle("hidden",!!state.enemy||state.hp<=0);$("enemyPanel").classList.toggle("hidden",!state.enemy);$("recoverPanel").classList.toggle("hidden",state.hp>0);
- if(state.enemy){$("enemyEmoji").textContent=state.enemy.emoji;$("enemyName").textContent=state.enemy.name;$("enemyHpText").textContent="❤️ "+state.enemyHp+"/"+state.enemy.hp+" HP";$("enemyFill").style.width=Math.max(0,state.enemyHp/state.enemy.hp*100)+"%";$("healBtn").disabled=state.potions<=0||state.hp>=100;$("attackBtn").disabled=state.hp<=0}
+ if(state.enemy){$("enemyEmoji").innerHTML=monsterIllustration(state.enemy.name);$("enemyName").textContent=state.enemy.name;$("enemyHpText").textContent="❤️ "+state.enemyHp+"/"+state.enemy.hp+" HP";$("enemyFill").style.width=Math.max(0,state.enemyHp/state.enemy.hp*100)+"%";$("healBtn").disabled=state.potions<=0||state.hp>=100;$("attackBtn").disabled=state.hp<=0}
  $("itemsList").innerHTML=state.items.length?state.items.map(x=>'<div class="item">'+escapeHtml(x)+'</div>').join(""):"<p>Todavía no encontraste objetos. Derrotá monstruos para conseguir trofeos.</p>";
  $("buyPotionBtn").disabled=state.gold<10;
  save();
+}
+
+function monsterIllustration(name){
+ const common='stroke-linecap="round" stroke-linejoin="round"';
+ if(name.includes("Lobo"))return '<svg viewBox="0 0 240 210" role="img" aria-label="Lobo sombrío"><defs><linearGradient id="wolfFur" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#a7c7bc"/><stop offset=".48" stop-color="#536f6c"/><stop offset="1" stop-color="#1b3435"/></linearGradient><linearGradient id="wolfLight" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#e1f1cf"/><stop offset="1" stop-color="#7eb79b"/></linearGradient></defs><ellipse cx="120" cy="187" rx="66" ry="10" fill="#020907" opacity=".5"/><path d="M65 145 Q38 126 42 100 Q47 79 63 87 L83 113 Q100 91 128 100 L159 87 Q179 80 190 98 L184 143 Q172 164 145 166 L91 164Z" fill="url(#wolfFur)" stroke="#c2ded0" stroke-width="3"/><path d="M68 95 L55 29 L98 68 L118 61 L153 30 L157 83 L177 105 L163 140 L133 153 L93 145 L75 126Z" fill="url(#wolfFur)" stroke="#d0e8d9" stroke-width="3"/><path d="M65 43 L83 72 L70 67Z M147 48 L141 74 L155 65Z" fill="#d88d86"/><path d="M82 91 L110 98 L96 107Z M131 98 L158 89 L147 107Z" fill="#f9e7a0"/><ellipse cx="98" cy="99" rx="7" ry="10" fill="#f8d777"/><ellipse cx="145" cy="99" rx="7" ry="10" fill="#f8d777"/><ellipse cx="99" cy="100" rx="2.8" ry="7" fill="#15251c"/><ellipse cx="145" cy="100" rx="2.8" ry="7" fill="#15251c"/><path d="M103 121 Q120 112 138 121 L128 136 L113 136Z" fill="#172725"/><path d="M114 134 L120 141 L126 134" fill="#fff1dc"/><path d="M83 150 L79 178 L101 178 L111 159 M145 158 L153 179 L174 178 L165 145" fill="#405d57" stroke="#c2ded0" stroke-width="3"/><path d="M48 119 Q27 118 21 99 Q39 108 48 95" fill="none" stroke="#8baea0" stroke-width="10" '+common+'/></svg>';
+ if(name.includes("Gólem"))return '<svg viewBox="0 0 240 210" role="img" aria-label="Gólem antiguo"><defs><linearGradient id="stone" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#d0c8a8"/><stop offset=".45" stop-color="#827e68"/><stop offset="1" stop-color="#3d4b43"/></linearGradient><linearGradient id="crystal"><stop stop-color="#fff0a0"/><stop offset="1" stop-color="#e58d3d"/></linearGradient></defs><ellipse cx="120" cy="188" rx="72" ry="10" fill="#020907" opacity=".5"/><path d="M77 103 L54 83 L40 111 L55 146 L71 153 L69 179 L98 181 L108 154 L132 154 L144 181 L173 179 L169 146 L190 128 L180 91 L158 101 L151 75 L89 75Z" fill="url(#stone)" stroke="#d2cba9" stroke-width="3"/><path d="M80 81 L74 48 L101 64 L118 44 L137 65 L164 45 L158 91 L174 112 L155 140 L84 140 L67 111Z" fill="url(#stone)" stroke="#e1d8b5" stroke-width="3"/><path d="M92 97 L111 101 L102 111Z M130 101 L149 96 L139 111Z" fill="url(#crystal)"/><path d="M111 119 L130 119 L120 129Z" fill="#26352b"/><path d="M91 147 L88 166 L106 168 L111 150 M135 150 L141 168 L158 166 L151 144" fill="#646d5b" stroke="#d2cba9" stroke-width="3"/><path d="M58 101 L45 122 L60 133 M170 105 L187 119 L174 136" fill="none" stroke="#d7c9a0" stroke-width="9" '+common+'/><path d="M119 52 L127 70 L119 83 L111 70Z" fill="#f5d77a" stroke="#fff0ad" stroke-width="2"/></svg>';
+ return '<svg viewBox="0 0 240 210" role="img" aria-label="Slime salvaje"><defs><radialGradient id="slime" cx=".28" cy=".16" r=".85"><stop stop-color="#e1ffd0"/><stop offset=".25" stop-color="#8cf29a"/><stop offset=".65" stop-color="#27b969"/><stop offset="1" stop-color="#075b3c"/></radialGradient><linearGradient id="slimeSpike" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff3a6"/><stop offset="1" stop-color="#8ddda0"/></linearGradient></defs><ellipse cx="120" cy="183" rx="69" ry="11" fill="#020907" opacity=".48"/><path d="M43 164 Q34 145 50 125 L64 91 Q69 72 86 91 L99 68 L116 87 L138 63 L150 89 L173 83 Q190 89 190 116 L199 146 Q198 171 173 175 L66 175 Q48 174 43 164Z" fill="url(#slime)" stroke="#baffc0" stroke-width="3"/><path d="M75 91 L81 48 L104 77Z M134 77 L160 43 L160 91Z" fill="url(#slimeSpike)" stroke="#caffc7" stroke-width="3"/><ellipse cx="91" cy="119" rx="14" ry="19" fill="#f8fff2"/><ellipse cx="148" cy="119" rx="14" ry="19" fill="#f8fff2"/><ellipse cx="94" cy="123" rx="6" ry="11" fill="#10291d"/><ellipse cx="145" cy="123" rx="6" ry="11" fill="#10291d"/><circle cx="96" cy="118" r="3" fill="#fff"/><circle cx="147" cy="118" r="3" fill="#fff"/><path d="M101 145 Q120 161 139 144" fill="none" stroke="#063f2a" stroke-width="7" '+common+'/><path d="M58 148 Q39 151 34 136 M181 143 Q202 145 207 128" fill="none" stroke="#50d782" stroke-width="13" '+common+'/><ellipse cx="70" cy="100" rx="9" ry="5" fill="#eaffdf" opacity=".8"/></svg>';
 }
 function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
 function view(name){for(const n of ["explore","fight","bag"]){$(n+"View").classList.toggle("hidden",n!==name);$("tab"+({explore:"Explore",fight:"Fight",bag:"Bag"}[n])).classList.toggle("primary",n===name)}}
