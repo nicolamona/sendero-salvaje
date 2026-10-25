@@ -721,6 +721,32 @@ video,.cameraWrap,.arCanvasWrap{border-radius:13px!important}
  *,*:before,*:after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}
 }
 
+
+/* V42 — movimiento ambiental discreto. Solo CSS; no modifica mecánicas ni guardado. */
+@keyframes ssMistDrift{
+  0%{transform:translate3d(-1.5%,0,0) scale(1);opacity:.72}
+  100%{transform:translate3d(1.5%,-2%,0) scale(1.035);opacity:.94}
+}
+@keyframes ssMoonGlow{
+  0%,100%{filter:brightness(.96);box-shadow:0 0 22px #e5cda344,0 0 65px #c5a97920}
+  50%{filter:brightness(1.06);box-shadow:0 0 27px #e5cda355,0 0 76px #c5a9792b}
+}
+@keyframes ssTrailBreath{
+  0%,100%{opacity:.58}
+  50%{opacity:.82}
+}
+@keyframes ssCreaturePresence{
+  0%,100%{transform:translateY(0) scale(1)}
+  50%{transform:translateY(-2px) scale(1.003)}
+}
+.forestMist{animation:ssMistDrift 19s ease-in-out infinite alternate}
+.moon{animation:ssMoonGlow 9s ease-in-out infinite}
+.trail{animation:ssTrailBreath 11s ease-in-out infinite}
+#enemyPanel .scene{animation:ssCreaturePresence 5.8s ease-in-out infinite}
+@media(prefers-reduced-motion:reduce){
+  .forestMist,.moon,.trail,#enemyPanel .scene{animation:none!important}
+}
+
 </style>
 </head>
 <body>
