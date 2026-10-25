@@ -227,6 +227,22 @@ nav button{font-size:13px!important;padding:10px 4px!important;min-height:44px!i
 /* Bestiario persistente */
 .bestiaryList{border:1px solid #2e4c3b;border-radius:14px;padding:0 12px;background:#0b1713}.bestiaryEntry{align-items:center;gap:10px}.bestiaryEntry b{color:#e2f4df}.bestiaryIcon{font-size:25px;filter:drop-shadow(0 3px 6px #0005)}.rarity-común{color:#c5d7ca}.rarity-rara{color:#79d9ff;border-color:#5abce5;background:#102b3b;box-shadow:0 0 16px #36bff522}.rarity-legendaria{color:#ffe18d;border-color:#d4a84e;background:#352710;box-shadow:0 0 20px #f6c74b33}.gameToast{position:fixed;z-index:12000;left:50%;bottom:calc(18px + env(safe-area-inset-bottom));width:min(92vw,460px);padding:13px 16px;border:1px solid #83dca0;border-radius:16px;background:#0b1d15f2;color:#eaffed;text-align:center;font-weight:850;letter-spacing:.2px;box-shadow:0 14px 38px #0008;opacity:0;transform:translate(-50%,18px) scale(.97);pointer-events:none;transition:opacity .22s,transform .22s}.gameToast.show{opacity:1;transform:translate(-50%,0) scale(1)}.gameToast:empty{display:none}
 
+
+/* Criaturas de pesadilla: siluetas sin aspecto de bloque y escena de combate cinematográfica */
+#enemyPanel .scene{position:relative;isolation:isolate;overflow:hidden;background:radial-gradient(ellipse at 50% 42%,#3b2928 0,#17211f 42%,#09110f 78%)!important;border:1px solid #754b43;box-shadow:inset 0 0 42px #0009,0 12px 30px #0006}
+#enemyPanel .scene:before{content:"";position:absolute;inset:0;z-index:-1;opacity:.38;background:repeating-linear-gradient(112deg,transparent 0 28px,#a8b8a018 29px 30px,transparent 31px 57px),radial-gradient(ellipse at 50% 100%,#b32f2f33,transparent 58%);animation:nightmareMist 8s ease-in-out infinite alternate}
+#enemyPanel .enemy{display:grid;place-items:center;min-height:235px;filter:drop-shadow(0 12px 14px #000c) drop-shadow(0 0 17px #c32c2c55);animation:enemyThreat 3.3s ease-in-out infinite}
+#enemyPanel .enemy svg{width:min(82vw,330px)!important;height:245px!important;overflow:visible;filter:contrast(1.12) saturate(1.13) drop-shadow(0 0 5px #d24d3540)}
+#enemyPanel .scene h2{position:relative;text-shadow:0 2px 2px #000,0 0 16px #ff6c4b55;letter-spacing:.6px}
+#enemyPanel .rarity-legendaria{box-shadow:0 0 18px #ffc85744}
+.weeklyQuest{border-color:#76423d!important;background:linear-gradient(135deg,#2c1c20,#17201e)!important}
+.weeklyQuest strong{color:#ffb1a1}
+.weeklyQuest progress{accent-color:#e66b59}
+#weeklyRewardBtn{background:linear-gradient(120deg,#9d332e,#5d2026)!important;border-color:#e17868!important;color:#fff2e9!important}
+@keyframes enemyThreat{0%,100%{transform:translateY(0) scale(1) rotate(-.6deg)}50%{transform:translateY(-5px) scale(1.035) rotate(.6deg)}}
+@keyframes nightmareMist{from{transform:translateX(-5px);opacity:.22}to{transform:translateX(5px);opacity:.48}}
+@media(prefers-reduced-motion:reduce){#enemyPanel .enemy,#enemyPanel .scene:before{animation:none}}
+
 </style>
 </head>
 <body>
