@@ -1049,7 +1049,7 @@ creature.visible=false;scene.add(creature);arCreature=creature;arSession=await n
   const details=$("walletDetails"),connect=$("walletConnectBtn"),disconnect=$("walletDisconnectBtn"),networkBtn=$("walletNetworkBtn");
   if(!details||!connect||!disconnect||!networkBtn)return;
   const provider=window.ethereum;
-  if(!provider){walletAccount=null;details.classList.add("hidden");disconnect.classList.add("hidden");connect.disabled=false;connect.textContent="Conectar billetera";networkBtn.disabled=true;walletStatus("No se detectó una billetera en este navegador. En Android, abrí esta URL desde el navegador Web3 de Base / Coinbase Wallet y volvé a tocar Conectar billetera.","warn");return}
+  if(!provider){walletAccount=null;details.classList.add("hidden");disconnect.classList.add("hidden");connect.disabled=false;connect.textContent="Conectar con Base Wallet";networkBtn.disabled=true;walletStatus("No se detectó una billetera en este navegador. En Android, abrí esta URL desde el navegador Web3 de Base / Coinbase Wallet y volvé a tocar Conectar billetera.","warn");return}
   walletProvider=provider;
   let accounts=[],chainId="";
   try{accounts=await provider.request({method:"eth_accounts"});chainId=await provider.request({method:"eth_chainId"})}catch(e){walletStatus("No se pudo consultar la billetera. Revisá que esté desbloqueada e intentá de nuevo.","warn");return}
@@ -1063,33 +1063,52 @@ creature.visible=false;scene.add(creature);arCreature=creature;arSession=await n
    connect.textContent="Billetera conectada";connect.disabled=false;
    walletStatus(chainId.toLowerCase()===EXPECTED_CHAIN_ID?"Conectada a Base Sepolia. Solo se lee la cuenta y la red; no se enviaron transacciones.":"Billetera conectada, pero la red no es Base Sepolia. Cambiá a la testnet antes de continuar.",chainId.toLowerCase()===EXPECTED_CHAIN_ID?"ok":"warn");
   }else{
-   details.classList.add("hidden");disconnect.classList.add("hidden");connect.textContent="Conectar billetera";connect.disabled=false;
+   details.classList.add("hidden");disconnect.classList.add("hidden");connect.textContent="Conectar con Base Wallet";connect.disabled=false;
    walletStatus("Billetera disponible, todavía no conectada. No se solicitarán firmas ni fondos.");
   }
  };
  const walletConnect=async()=>{
-  if(!window.ethereum){walletStatus("No se detectó una billetera. Para usar Coinbase Wallet / Base en Android, abrí esta misma URL desde el navegador Web3 de esa app; Brave conecta la billetera que Brave expone.","warn");return}
-  walletProvider=window.ethereum;
-  const button=$("walletConnectBtn");button.disabled=true;button.textContent="Esperando billetera…";
+  const button=$("walletConnectBtn");
+  button.disabled=true;button.textContent="Abriendo Base Wallet…";
   try{
+   // SDK oficial: permite enlazar una dapp abierta en un navegador móvil con Base Wallet.
+   if(!coinbaseSdk){
+    const sdkModule=await import("https://esm.sh/@coinbase/wallet-sdk@4.3.4?bundle");
+    const CoinbaseWalletSDK=sdkModule.default||sdkModule.CoinbaseWalletSDK;
+    if(!CoinbaseWalletSDK)throw new Error("No se pudo cargar el SDK oficial de Coinbase Wallet.");
+    coinbaseSdk=new CoinbaseWalletSDK({
+     appName:"Sendero Salvaje",
+     appLogoUrl:location.origin+"/icon.svg",
+     enableMobileWalletLink:true
+    });
+   }
+   walletProvider=coinbaseSdk.makeWeb3Provider();
    const accounts=await walletProvider.request({method:"eth_requestAccounts"});
-   if(!accounts||!accounts.length)throw new Error("La billetera no entregó una cuenta.");
+   if(!accounts||!accounts.length)throw new Error("Base Wallet no devolvió una cuenta.");
    walletAccount=accounts[0];
+   if(walletProvider&&typeof walletProvider.on==="function"){
+    walletProvider.on("accountsChanged",()=>walletRender());
+    walletProvider.on("chainChanged",()=>walletRender());
+   }
    await walletRender();
   }catch(e){
    const code=e&&e.code;
-   walletStatus(code===4001?"Conexión rechazada. No se realizó ninguna operación.":"No se pudo conectar: "+(e&&e.message?e.message:"error desconocido"),"warn");
-  }finally{button.disabled=false;button.textContent=walletAccount?"Billetera conectada":"Conectar billetera"}
+   walletStatus(code===4001?"Conexión rechazada. No se realizó ninguna operación.":"No se pudo conectar con Base Wallet: "+(e&&e.message?e.message:"error desconocido")+". Comprobá tu conexión y volvé a intentar.","warn");
+  }finally{
+   button.disabled=false;
+   button.textContent=walletAccount?"Billetera conectada":"Conectar con Base Wallet";
+  }
  };
  const walletSwitchNetwork=async()=>{
-  if(!window.ethereum){walletStatus("Primero necesitás una billetera compatible con redes EVM.","warn");return}
-  walletProvider=window.ethereum;
+  const provider=walletProvider||window.ethereum;
+  if(!provider){walletStatus("Primero conectá Base Wallet.","warn");return}
+  walletProvider=provider;
   try{
-   await walletProvider.request({method:"wallet_switchEthereumChain",params:[{chainId:EXPECTED_CHAIN_ID}]});
+   await provider.request({method:"wallet_switchEthereumChain",params:[{chainId:EXPECTED_CHAIN_ID}]});
   }catch(e){
    if(e&&e.code===4902){
     try{
-     await walletProvider.request({method:"wallet_addEthereumChain",params:[{chainId:EXPECTED_CHAIN_ID,chainName:NETWORK_LABEL,nativeCurrency:{name:"Ether",symbol:"ETH",decimals:18},rpcUrls:["https://sepolia.base.org"],blockExplorerUrls:["https://sepolia.basescan.org"]}]});
+     await provider.request({method:"wallet_addEthereumChain",params:[{chainId:EXPECTED_CHAIN_ID,chainName:NETWORK_LABEL,nativeCurrency:{name:"Ether",symbol:"ETH",decimals:18},rpcUrls:["https://sepolia.base.org"],blockExplorerUrls:["https://sepolia.basescan.org"]}]});
     }catch(addError){walletStatus("No se pudo agregar Base Sepolia: "+(addError.message||"operación cancelada"),"warn");return}
    }else{
     walletStatus(e&&e.code===4001?"Cambio de red cancelado.":"No se pudo cambiar de red: "+(e&&e.message?e.message:"error desconocido"),"warn");return;
@@ -1101,7 +1120,7 @@ creature.visible=false;scene.add(creature);arCreature=creature;arSession=await n
   walletAccount=null;
   $("walletDetails").classList.add("hidden");
   $("walletDisconnectBtn").classList.add("hidden");
-  $("walletConnectBtn").textContent="Conectar billetera";
+  $("walletConnectBtn").textContent="Conectar con Base Wallet";
   walletStatus("Se ocultó la cuenta en Sendero Salvaje. Para revocar el permiso de la billetera, usá los ajustes de conexiones de tu billetera.");
  };
  $("walletConnectBtn").addEventListener("click",walletConnect);
