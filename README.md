@@ -5,6 +5,9 @@
 - Experiencia, niveles, monedas, pociones, trofeos y curación.
 - Guardado local del progreso mediante `localStorage`.
 - Acceso opcional al GPS del dispositivo (solicita permiso).
+- Modo de realidad aumentada espacial con WebXR Hit Test para colocar una criatura en una superficie detectada (requiere dispositivo/navegador compatibles y permisos).
+- Modo de cámara clásica como alternativa visual si el dispositivo no admite AR espacial.
+- Contrato del explorador: derrota 3 criaturas para cobrar 50 monedas y una poción.
 - Acceso opcional a la cámara trasera (solicita permiso).
 - Estructura PWA básica para instalar/abrir como app cuando se publique por HTTPS.
 
@@ -17,7 +20,7 @@
 ## Límites de esta versión
 - No tiene cuentas ni sincronización en la nube; el progreso queda en ese navegador/dispositivo.
 - Los monstruos se generan dentro del juego, no por GPS real ni por ubicación geográfica.
-- La cámara muestra una superposición visual de prueba; no detecta superficies ni coloca monstruos mediante AR espacial.
+- La AR espacial usa WebXR Hit Test cuando el navegador y el dispositivo lo admiten; no todos los teléfonos Android son compatibles. La cámara clásica sigue siendo una superposición visual de prueba.
 - El GPS no se envía a ningún servidor.
 - Antes de usarlo caminando, hay que detenerse en un lugar seguro para combatir.
 
