@@ -41,11 +41,12 @@ function env() {
     BASE_RPC_URL: "https://rpc.example.invalid",
     VAULT_ADDRESS: vault,
     GAME_ORIGIN: "https://example.game",
-    MIN_CONFIRMATIONS: "20"
+    MIN_CONFIRMATIONS: "20",
+    CHAIN_ID: "8453"
   };
 }
 
-function mockRpc({ confirmations = 25, from = wallet, txValue = amount, eventPlayer = wallet, receiptStatus = "0x1" } = {}) {
+function mockRpc({ confirmations = 25, from = wallet, txValue = amount, eventPlayer = wallet, receiptStatus = "0x1", chainId = "0x2105" } = {}) {
   const log = {
     address: vault,
     topics: [abi.getEvent("Deposited").topicHash, "0x" + eventPlayer.slice(2).toLowerCase().padStart(64, "0")],
@@ -67,7 +68,7 @@ function mockRpc({ confirmations = 25, from = wallet, txValue = amount, eventPla
     const body = JSON.parse(options.body);
     let result;
     switch (body.method) {
-      case "eth_chainId": result = "0x2105"; break;
+      case "eth_chainId": result = chainId; break;
       case "eth_getCode": result = "0x6001"; break;
       case "eth_getTransactionReceipt": result = receipt; break;
       case "eth_getTransactionByHash": result = tx; break;
@@ -134,6 +135,18 @@ test("records a finalized deposit idempotently", async () => {
   assert.equal(secondBody.status, "finalized");
   assert.equal(secondBody.alreadyRecorded, true);
   assert.equal(rows.size, 1);
+});
+
+
+test("verifies Base Sepolia when explicitly configured", async () => {
+  mockRpc({ confirmations: 5, chainId: "0x14a34" });
+  const configuration = { ...env(), CHAIN_ID: "84532", MIN_CONFIRMATIONS: "5" };
+  const response = await request({ txHash, wallet }, configuration);
+  const body = await response.json();
+  assert.equal(response.status, 200);
+  assert.equal(body.status, "finalized");
+  assert.equal(rows.size, 1);
+  assert.equal([...rows.values()][0].chain_id, 84532);
 });
 
 test("rejects a transaction value that disagrees with the event", async () => {
