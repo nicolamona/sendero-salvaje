@@ -104,6 +104,9 @@ contract SenderoSalvajeVaultTest is Test {
         vault.startExpedition(id, 1 ether);
 
         vault.setExpeditionWinRewardBps(100);
+        vault.approveExpeditionOutcome(alice, id, SenderoSalvajeVault.ExpeditionOutcome.Win);
+        vm.prank(bob);
+        vault.approveExpeditionOutcome(alice, id, SenderoSalvajeVault.ExpeditionOutcome.Win);
         vm.expectRevert(SenderoSalvajeVault.InsufficientRewardReserve.selector);
         vault.settleExpedition(alice, id, SenderoSalvajeVault.ExpeditionOutcome.Win);
     }
