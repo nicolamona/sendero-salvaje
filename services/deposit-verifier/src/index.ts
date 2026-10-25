@@ -179,6 +179,9 @@ export default {
       }
 
       const item = decoded[0];
+      if (hexToBigInt(String(tx.value ?? "0x0")) !== item.amount) {
+        return json({ ok: false, error: "TRANSACTION_VALUE_MISMATCH" }, 422, corsOrigin);
+      }
       const logIndex = Number(hexToBigInt(item.log.logIndex).toString());
       const blockNumber = hexToBigInt(receipt.blockNumber);
       const receiptBlockHash = String(receipt.blockHash).toLowerCase();
