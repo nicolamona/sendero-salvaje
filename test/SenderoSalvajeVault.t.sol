@@ -11,6 +11,7 @@ contract SenderoSalvajeVaultTest is Test {
 
     function setUp() public {
         vault = new SenderoSalvajeVault(address(this));
+        vault.setSettlementSigner(bob, true);
         vm.deal(alice, 100 ether);
         vm.deal(bob, 100 ether);
     }
@@ -69,7 +70,7 @@ contract SenderoSalvajeVaultTest is Test {
         vm.prank(alice);
         vault.startExpedition(id, 1 ether);
 
-        vault.settleExpedition(alice, id, SenderoSalvajeVault.ExpeditionOutcome.Loss);
+        _approveAndSettle(alice, id, SenderoSalvajeVault.ExpeditionOutcome.Loss);
 
         assertEq(vault.availableBalance(alice), 0);
         assertEq(vault.totalExpeditionPrincipal(), 0);
@@ -87,7 +88,7 @@ contract SenderoSalvajeVaultTest is Test {
         vm.prank(alice);
         vault.startExpedition(id, 1 ether);
 
-        vault.settleExpedition(alice, id, SenderoSalvajeVault.ExpeditionOutcome.Win);
+        _approveAndSettle(alice, id, SenderoSalvajeVault.ExpeditionOutcome.Win);
 
         assertEq(vault.availableBalance(alice), 1.1 ether);
         assertEq(vault.expeditionRewardReserve(), 0.1 ether);
@@ -129,11 +130,22 @@ contract SenderoSalvajeVaultTest is Test {
         vault.deposit{value: 1 ether}();
         vm.prank(alice);
         vault.startExpedition(id, 1 ether);
-        vault.settleExpedition(alice, id, SenderoSalvajeVault.ExpeditionOutcome.Refund);
+        _approveAndSettle(alice, id, SenderoSalvajeVault.ExpeditionOutcome.Refund);
 
         vm.prank(alice);
         vm.expectRevert(SenderoSalvajeVault.PositionAlreadyExists.selector);
         vault.startExpedition(id, 1 ether);
+    }
+
+    function _approveAndSettle(
+        address player,
+        bytes32 id,
+        SenderoSalvajeVault.ExpeditionOutcome outcome
+    ) internal {
+        vault.approveExpeditionOutcome(player, id, outcome);
+        vm.prank(bob);
+        vault.approveExpeditionOutcome(player, id, outcome);
+        vault.settleExpedition(player, id, outcome);
     }
 
     function testFuzzAccountingNeverExceedsContractBalance(uint96 depositAmount) public {
