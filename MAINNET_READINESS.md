@@ -8,11 +8,11 @@
 - The vault and deposit verifier are drafts.
 - The deposit verifier's automated suite has 8 mocked-RPC tests and TypeScript typechecking; these are not a live-chain test.
 - No verified mainnet vault address, live deposit, live withdrawal, or production Cloudflare Worker is recorded here.
-- The vault's expedition settlement operator can choose a player's payout. This trust assumption is unacceptable for production funds without a reviewed, constrained settlement mechanism.
+- The contract now derives expedition payouts from fixed `Loss`, `Refund`, and `Win` outcomes, with a configurable capped win-reward percentage backed by the separate expedition reserve. However, the single settlement operator can still choose the outcome; production remains blocked until reviewed quorum/proof-based outcome verification is implemented.
 
 ## Required gates before mainnet
 
-1. **Redesign expedition settlement.** Use a verifiable game result, constrained payout rules, or a reviewed dispute/multisig design. Do not let one hot operator freely choose payout amounts.
+1. **Redesign expedition settlement authority.** Fixed outcome-based payouts are implemented on the draft branch, but a single operator still attests the outcome. Require reviewed quorum/proof-based verification, replay protection, and a dispute/recovery process. Do not treat the current contract as production safe.
 2. **Independent security review.** Review accounting invariants, reward reserve solvency, pause/recovery paths, access control, reentrancy, rounding, griefing, and all state transitions. Unit tests alone are not an audit.
 3. **Testnet end-to-end.** Deploy a fresh vault to Base Sepolia; verify source and constructor arguments; exercise deposits, partial/full withdrawals, expedition wins/losses/refunds, staking lock maturity, reward exhaustion, pause/unpause, duplicate verifier requests, failed transactions, and reorg reconciliation.
 4. **Reorg-safe verifier.** Add scheduled reconciliation and monitoring. Keep the indexer as an audit/index only; the contract remains the source of truth.
