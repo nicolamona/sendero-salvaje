@@ -901,7 +901,7 @@ let cameraStream=null,cameraEncounter=null,watchId=null,arSession=null,arRendere
 function save(){try{
  const current=readSave(SAVE_KEY),guard=readSave(GUARD_KEY);
  const bestKnown=[current,guard].filter(Boolean).sort((a,b)=>Number(b.level||1)-Number(a.level||1))[0];
- if(bestKnown&&Number(bestKnown.level||1)>Number(state.level||1)){state={...initial(),...bestKnown};}
+ if(bestKnown&&Number(bestKnown.level||1)>Number(state.level||1)){state={...initial(),...bestKnown};render();return;}
  if(current&&Number(current.level||1)>=Number(state.level||1))localStorage.setItem(BACKUP_KEY,JSON.stringify(current));
  const snapshot=JSON.stringify(state);
  localStorage.setItem(SAVE_KEY,snapshot);
