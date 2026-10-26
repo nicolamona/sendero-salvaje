@@ -907,6 +907,8 @@ let durableLoaded=false;
 function save(){if(diagnosticMode||!durableLoaded)return;try{
  const current=readSave(SAVE_KEY),guard=readSave(GUARD_KEY),backup=readSave(BACKUP_KEY);
  const protectedLevel=Math.max(readLevelGuard(),Number(state.level)||1,Number(current?.level)||1,Number(guard?.level)||1,Number(backup?.level)||1);
+ // Nunca escribir un snapshot por debajo del nivel ya protegido.
+ state.level=Math.max(Number(state.level)||1,protectedLevel);
  if(current&&Number(current.level||1)>=Number(state.level||1))localStorage.setItem(BACKUP_KEY,JSON.stringify(current));
  const snapshot=JSON.stringify(state);
  localStorage.setItem(SAVE_KEY,snapshot);
@@ -935,6 +937,8 @@ function render(){
  // Recuperar el nivel protegido antes de dibujar cualquier dato de la interfaz.
  const currentSave=readSave(SAVE_KEY),guardSave=readSave(GUARD_KEY),backupSave=readSave(BACKUP_KEY);
  state.level=Math.max(Number(state.level)||1,readLevelGuard(),Number(currentSave?.level)||1,Number(guardSave?.level)||1,Number(backupSave?.level)||1);
+ // Punto de guardado inmediato: si el render falla al actualizar algún panel, el progreso ya quedó persistido.
+ save();
  const currentZone=zones.find(z=>z.id===(state.zone||"bosque"))||zones[0];
  $("zoneDescription").textContent=currentZone.icon+" "+currentZone.name+" — "+currentZone.description;
  $("zoneGrid").innerHTML=zones.map(z=>{const unlocked=state.level>=z.level;return '<button class="zoneBtn '+(z.id===currentZone.id?"active ":"")+(unlocked?"":"locked")+'" data-zone="'+z.id+'" '+(unlocked?"":"disabled")+'>'+z.icon+" "+escapeHtml(z.name)+'<span>'+(unlocked?"Nivel recomendado "+z.level:"🔒 Se desbloquea en nivel "+z.level)+'</span></button>'}).join("");
