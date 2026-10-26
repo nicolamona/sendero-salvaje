@@ -747,6 +747,73 @@ video,.cameraWrap,.arCanvasWrap{border-radius:13px!important}
   .forestMist,.moon,.trail,#enemyPanel .scene{animation:none!important}
 }
 
+
+/* V45 — botones principales de exploración: jerarquía clara y acabado premium */
+#exploreView>.actions{
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:10px!important;
+  margin-top:16px!important;
+  align-items:stretch!important
+}
+#exploreView>.actions button{
+  position:relative!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:8px!important;
+  min-width:0!important;
+  min-height:56px!important;
+  padding:12px 14px!important;
+  border-radius:15px!important;
+  text-align:center!important;
+  font-size:13px!important;
+  font-weight:700!important;
+  line-height:1.3!important;
+  letter-spacing:.01em!important;
+  white-space:normal!important;
+  overflow-wrap:anywhere!important;
+  box-shadow:inset 0 1px #ffffff0c,0 5px 14px #0002!important
+}
+#exploreView>.actions #searchBtn{
+  grid-column:1/-1!important;
+  min-height:60px!important;
+  justify-content:flex-start!important;
+  padding:0 19px!important;
+  text-align:left!important;
+  color:#211b13!important;
+  background:linear-gradient(115deg,#f0d8b3 0%,#d9b88a 58%,#c8a174 100%)!important;
+  border:1px solid #f1d9b5!important;
+  box-shadow:inset 0 1px #ffffffa0,0 7px 18px #0003!important;
+  font-size:14px!important
+}
+#exploreView>.actions #searchBtn:after{
+  content:"›";
+  margin-left:auto;
+  font-size:25px;
+  line-height:1;
+  font-weight:400;
+  opacity:.72
+}
+#exploreView>.actions #gpsBtn,
+#exploreView>.actions #arBtn{
+  background:linear-gradient(150deg,#292c2b,#1b1e1d)!important;
+  border:1px solid #484a44!important;
+  color:#e8e1d5!important
+}
+#exploreView>.actions #gpsBtn{border-bottom:2px solid #687b66!important}
+#exploreView>.actions #arBtn{border-bottom:2px solid #8a7558!important}
+#exploreView>.actions button:active{transform:translateY(1px) scale(.99)!important}
+@media(max-width:360px){
+  #exploreView>.actions{gap:8px!important}
+  #exploreView>.actions button{padding:10px 8px!important;font-size:12px!important}
+  #exploreView>.actions #searchBtn{padding:0 14px!important;font-size:13px!important}
+}
+@media(min-width:600px){
+  #exploreView>.actions{max-width:560px!important;margin-left:auto!important;margin-right:auto!important}
+  #exploreView>.actions button{min-height:62px!important}
+}
+
 </style>
 </head>
 <body>
