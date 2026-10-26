@@ -1082,27 +1082,33 @@ async function diagnosticReadIDB(){
   }finally{db.close()}
  }catch(e){return {status:"Error de lectura: "+String(e&&e.message||e)}}
 }
-async function showSaveDiagnostic(){
- const report={modo:"solo lectura; el juego no se renderiza ni guarda",origin:location.origin,path:location.pathname,serviceWorkerController:!!(navigator.serviceWorker&&navigator.serviceWorker.controller),localStorage:{},indexedDB:await diagnosticReadIDB()};
- try{
-  for(let i=0;i<localStorage.length;i++){
-   const k=localStorage.key(i);
-   if(k&&(/senderoSalvaje/i.test(k)||/sendero.?salvaje/i.test(k))) {
-    let v=null;try{v=JSON.parse(localStorage.getItem(k)||"null")}catch{}
-    report.localStorage[k]=diagnosticSummary(v);
-    if(k==="senderoSalvajeLevelGuard")report.localStorage[k]={found:!!v,level:Number(v&&v.level)||Number(v)||null,updatedAt:v&&v.updatedAt||null};
-   }
-  }
- }catch(e){report.localStorage.error=String(e&&e.message||e)}
- report.stateInMemory=diagnosticSummary(state);
- const out=JSON.stringify(report,null,2);
+function showSaveDiagnostic(){
  const panel=document.createElement("div");
- panel.style.cssText="position:fixed;inset:0;z-index:999999;background:#071018;color:#eaf4f7;padding:16px;overflow:auto;font:14px system-ui";
- panel.innerHTML='<h2 style="margin:0 0 8px">Diagnóstico del guardado</h2><p style="margin:0 0 12px">Solo lectura: no se modificó la partida. Copiá o enviá una captura de este informe.</p><textarea id="saveDiagnosticText" readonly style="width:100%;height:65vh;background:#101f29;color:#eaf4f7;border:1px solid #587080;border-radius:8px;padding:10px;font:12px monospace"></textarea><div style="display:flex;gap:8px;margin-top:10px"><button id="saveDiagnosticCopy" style="padding:12px;border-radius:8px">Seleccionar informe</button><button id="saveDiagnosticClose" style="padding:12px;border-radius:8px">Cerrar</button></div>';
+ panel.style.cssText="position:fixed;inset:0;z-index:2147483647;background:#071018;color:#eaf4f7;padding:16px;overflow:auto;font:14px system-ui";
+ panel.innerHTML='<h2 style="margin:0 0 8px">Diagnóstico del guardado</h2><p style="margin:0 0 12px">Solo lectura: no se modificó la partida. Esperá a que aparezca el informe y enviá una captura.</p><textarea id="saveDiagnosticText" readonly style="width:100%;height:65vh;background:#101f29;color:#eaf4f7;border:1px solid #587080;border-radius:8px;padding:10px;font:12px monospace">Leyendo las copias del guardado…</textarea><div style="display:flex;gap:8px;margin-top:10px"><button id="saveDiagnosticCopy" style="padding:12px;border-radius:8px">Seleccionar informe</button><button id="saveDiagnosticClose" style="padding:12px;border-radius:8px">Cerrar</button></div>';
  document.body.appendChild(panel);
- const ta=panel.querySelector("#saveDiagnosticText");ta.value=out;
+ const ta=panel.querySelector("#saveDiagnosticText");
  panel.querySelector("#saveDiagnosticCopy").onclick=()=>{ta.focus();ta.select();try{document.execCommand("copy")}catch{}};
  panel.querySelector("#saveDiagnosticClose").onclick=()=>panel.remove();
+ (async()=>{
+  const report={modo:"solo lectura; el juego no se renderiza ni guarda",origin:location.origin,path:location.pathname,serviceWorkerController:!!(navigator.serviceWorker&&navigator.serviceWorker.controller),localStorage:{},indexedDB:{status:"lectura pendiente"}};
+  try{
+   for(let i=0;i<localStorage.length;i++){
+    const k=localStorage.key(i);
+    if(k&&/senderoSalvaje/i.test(k)){
+     let v=null;try{v=JSON.parse(localStorage.getItem(k)||"null")}catch{}
+     report.localStorage[k]=diagnosticSummary(v);
+     if(k==="senderoSalvajeLevelGuard")report.localStorage[k]={found:!!v,level:Number(v&&v.level)||Number(v)||null,updatedAt:v&&v.updatedAt||null};
+    }
+   }
+  }catch(e){report.localStorage.error=String(e&&e.message||e)}
+  ta.value=JSON.stringify(report,null,2);
+  try{
+   const result=await Promise.race([diagnosticReadIDB(),new Promise(resolve=>setTimeout(()=>resolve({status:"Lectura de IndexedDB tardó demasiado; no se modificaron datos"}),2500))]);
+   report.indexedDB=result;
+  }catch(e){report.indexedDB={status:"Error: "+String(e&&e.message||e)}}
+  if(panel.isConnected)ta.value=JSON.stringify(report,null,2);
+ })();
 }
 if(diagnosticMode){showSaveDiagnostic()}else{readDurableSave().then(durable=>{if(durable&&typeof durable==="object"&&Number(durable.level)>=Number(state.level||1)){state={...initial(),...durable};if(!Array.isArray(state.bestiary))state.bestiary=[];if(!state.materials||typeof state.materials!=="object")state.materials={wood:0,venom:0,rune:0,ice:0,essence:0}}durableLoaded=true;render()}).catch(()=>{durableLoaded=true;render()});}
 </script>
