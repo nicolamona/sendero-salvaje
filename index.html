@@ -904,8 +904,6 @@ function writeDurableSave(snapshot){try{const request=indexedDB.open(IDB_NAME,1)
 async function readDurableSave(){const db=await new Promise((resolve,reject)=>{if(!("indexedDB" in window)){reject(new Error("IndexedDB no disponible"));return}const req=indexedDB.open(IDB_NAME,1);req.onupgradeneeded=()=>{if(!req.result.objectStoreNames.contains(IDB_STORE))req.result.createObjectStore(IDB_STORE)};req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error)});try{return await new Promise((resolve,reject)=>{const tx=db.transaction(IDB_STORE,"readonly");const req=tx.objectStore(IDB_STORE).get(IDB_KEY);req.onsuccess=()=>resolve(req.result||null);req.onerror=()=>reject(req.error)})}finally{db.close()}}
 function save(){try{
  const current=readSave(SAVE_KEY),guard=readSave(GUARD_KEY),backup=readSave(BACKUP_KEY);
- const bestKnown=[current,guard,backup].filter(Boolean).sort((a,b)=>Number(b.level||1)-Number(a.level||1))[0];
- if(bestKnown&&Number(bestKnown.level||1)>Number(state.level||1))state={...initial(),...bestKnown};
  const protectedLevel=Math.max(readLevelGuard(),Number(state.level)||1,Number(current?.level)||1,Number(guard?.level)||1,Number(backup?.level)||1);
  if(protectedLevel>Number(state.level||1))state.level=protectedLevel;
  if(current&&Number(current.level||1)>=Number(state.level||1))localStorage.setItem(BACKUP_KEY,JSON.stringify(current));
