@@ -1,19 +1,22 @@
-const CACHE = "sendero-salvaje-v59";
-const FILES = ["./", "./index.html", "./manifest.json", "./icon.svg", "./diagnostico.html", "./reparar-carga.html"];
-self.addEventListener("install", e => e.waitUntil(caches.open(CACHE).then(c => c.addAll(FILES)).then(() => self.skipWaiting())));
-self.addEventListener("activate", e => e.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))).then(() => self.clients.claim())));
-self.addEventListener("fetch", e => {
-  if (e.request.method !== "GET") return;
-  const url = new URL(e.request.url);
-  const isPage = e.request.mode === "navigate" || url.pathname.endsWith("/index.html") || url.pathname.endsWith("/sendero-salvaje/");
-  if (isPage) {
-    e.respondWith(fetch(e.request, {cache:"no-store"}).then(response => {
-      if (response && response.ok) caches.open(CACHE).then(c => c.put(e.request, response.clone()));
-      return response;
-    }).catch(() => caches.match(e.request).then(cached => cached || caches.match("./index.html"))));
-    return;
-  }
-  e.respondWith(caches.match(e.request).then(cached => cached || fetch(e.request).then(response => {
-    const copy = response.clone(); caches.open(CACHE).then(c => c.put(e.request, copy)); return response;
-  }).catch(() => caches.match("./index.html"))));
+// Recuperación de emergencia: retirar el service worker que puede servir una versión vieja del juego.
+self.addEventListener("install", event => {
+  event.waitUntil(self.skipWaiting());
+});
+self.addEventListener("activate", event => {
+  event.waitUntil((async () => {
+    const names = await caches.keys();
+    await Promise.all(names.filter(name => name.startsWith("sendero-salvaje-")).map(name => caches.delete(name)));
+    await self.registration.unregister();
+    const clientsList = await self.clients.matchAll({ type: "window", includeUncontrolled: true });
+    await Promise.all(clientsList.map(client => {
+      try {
+        const url = new URL(client.url);
+        if (url.origin === self.location.origin && url.pathname.startsWith("/sendero-salvaje/")) {
+          url.searchParams.set("recuperacion", "sw-retirado-20261026");
+          return client.navigate(url.href);
+        }
+      } catch (_) {}
+      return Promise.resolve();
+    }));
+  })());
 });
