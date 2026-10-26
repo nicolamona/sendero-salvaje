@@ -1091,7 +1091,7 @@ function showSaveDiagnostic(){
  panel.querySelector("#saveDiagnosticCopy").onclick=()=>{ta.focus();ta.select();try{document.execCommand("copy")}catch{}};
  panel.querySelector("#saveDiagnosticClose").onclick=()=>panel.remove();
  (async()=>{
-  const report={modo:"solo lectura; el juego no se renderiza ni guarda",origin:location.origin,path:location.pathname,serviceWorkerController:!!(navigator.serviceWorker&&navigator.serviceWorker.controller),localStorage:{},indexedDB:{status:"lectura pendiente"}};
+  const report={modo:"solo lectura; el juego no se renderiza ni guarda",build:"boot-probe-2026-10-26-a",origin:location.origin,path:location.pathname,serviceWorkerController:!!(navigator.serviceWorker&&navigator.serviceWorker.controller),runtimeStateBeforeIDB:diagnosticSummary(state),startupSaveCandidates:startupSaves.map(v=>({level:Number(v.level)||1,xp:Number(v.xp)||0,gold:Number(v.gold)||0,defeated:Number(v.defeated)||0})),protectedLevel:readLevelGuard(),localStorage:{},indexedDB:{status:"lectura pendiente"}};
   try{
    for(let i=0;i<localStorage.length;i++){
     const k=localStorage.key(i);
@@ -1105,7 +1105,7 @@ function showSaveDiagnostic(){
   ta.value=JSON.stringify(report,null,2);
   try{
    const result=await Promise.race([diagnosticReadIDB(),new Promise(resolve=>setTimeout(()=>resolve({status:"Lectura de IndexedDB tardó demasiado; no se modificaron datos"}),2500))]);
-   report.indexedDB=result;
+   report.indexedDB=result;report.runtimeStateAfterIDB=(result&&result.save&&Number(result.save.level)>=Number(state.level||1))?diagnosticSummary({...initial(),...result.save}):diagnosticSummary(state);
   }catch(e){report.indexedDB={status:"Error: "+String(e&&e.message||e)}}
   if(panel.isConnected)ta.value=JSON.stringify(report,null,2);
  })();
