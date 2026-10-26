@@ -1,0 +1,18 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#071018"><title>Recuperar carga · Sendero Salvaje</title><style>
+body{margin:0;padding:18px;background:#071018;color:#edf5f7;font:16px/1.45 system-ui}main{max-width:700px;margin:auto}section{background:#10212b;border:1px solid #29404d;border-radius:12px;padding:15px;margin:14px 0}button,a{display:inline-block;padding:12px 15px;border-radius:8px;border:1px solid #55717e;background:#193744;color:#fff;text-decoration:none;font:inherit;margin:5px 5px 5px 0}button:disabled{opacity:.5}#status{white-space:pre-wrap;color:#b8d1da}strong{color:#a6e7d0}</style></head><body><main><h1>Recuperación segura de Sendero Salvaje</h1><section><p><strong>La partida está intacta:</strong> las copias que leímos coinciden en nivel 13, 1.283 XP, 567 de oro y el resto del progreso.</p><p>El siguiente paso es forzar una carga limpia del juego. La acción de abajo borra únicamente la caché temporal y el registro del Service Worker de esta web. <strong>No borra localStorage ni IndexedDB</strong>, donde está tu partida.</p><button id="fix">Limpiar caché temporal y abrir el juego</button><p id="status">Todavía no se modificó nada. Tocá el botón solo cuando quieras hacer esta prueba.</p></section><section><h2>Copias detectadas en este navegador</h2><pre id="saves">Leyendo…</pre></section><script>
+const $=id=>document.getElementById(id);
+function summary(v){if(!v||typeof v!=="object")return {found:false};return {level:v.level||1,xp:v.xp||0,gold:v.gold||0,potions:v.potions||0,defeated:v.defeated||0,items:Array.isArray(v.items)?v.items.length:0,bestiary:Array.isArray(v.bestiary)?v.bestiary.length:0}}
+const saves={};try{for(const k of ["senderoSalvajeSave","senderoSalvajeSaveGuard","senderoSalvajeSaveBackup"]){try{saves[k]=summary(JSON.parse(localStorage.getItem(k)||"null"))}catch{saves[k]={error:"no se pudo leer"}}}}catch(e){saves.error=String(e)}
+$("saves").textContent=JSON.stringify(saves,null,2);
+$("fix").onclick=async()=>{
+ const b=$("fix");b.disabled=true;$("status").textContent="Limpiando solo cachés temporales…";
+ try{
+  let deleted=[];
+  if("caches" in window){for(const key of await caches.keys()){if(/^sendero-salvaje-v\d+$/i.test(key)){if(await caches.delete(key))deleted.push(key)}}}
+  let unregistered=0;
+  if("serviceWorker" in navigator){for(const reg of await navigator.serviceWorker.getRegistrations()){const scope=new URL(reg.scope);if(scope.origin===location.origin&&scope.pathname.startsWith("/sendero-salvaje/")){if(await reg.unregister())unregistered++}}}
+  $("status").textContent="Cachés eliminadas: "+(deleted.join(", ")||"ninguna")+". Service Workers desregistrados: "+unregistered+". Los datos de partida no se tocaron. Abriendo el juego actualizado…";
+  setTimeout(()=>location.href="./?recarga="+Date.now(),700);
+ }catch(e){$("status").textContent="No se pudo completar: "+String(e&&e.message||e)+". No se borraron los datos de la partida.";b.disabled=false}
+};
+</script></main></body></html>
