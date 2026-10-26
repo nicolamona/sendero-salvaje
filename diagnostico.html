@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#071018"><title>Diagnóstico de guardado · Sendero Salvaje</title>
+<style>body{margin:0;background:#071018;color:#eaf4f7;font:16px/1.45 system-ui;padding:16px}main{max-width:760px;margin:auto}h1{font-size:1.35rem}p{color:#bed0d8}textarea{width:100%;height:60vh;box-sizing:border-box;background:#101f29;color:#eaf4f7;border:1px solid #587080;border-radius:8px;padding:12px;font:13px/1.4 monospace}button{padding:12px 16px;border-radius:8px;border:1px solid #587080;background:#19303d;color:#fff;margin:8px 8px 0 0}</style></head>
+<body><main><h1>Diagnóstico del guardado</h1><p>Esta pantalla solo lee las copias de guardado de este mismo sitio. No inicia el juego ni modifica la partida. Enviame el informe de abajo.</p><textarea id="report" readonly>Preparando informe…</textarea><div><button id="copy">Seleccionar informe</button><button id="refresh">Volver a leer</button></div><p id="status">Leyendo almacenamiento local…</p></main>
+<script>
+const $=id=>document.getElementById(id);
+function summary(v){if(!v||typeof v!=="object")return {found:false};return {found:true,level:Number(v.level)||1,xp:Number(v.xp)||0,gold:Number(v.gold)||0,potions:Number(v.potions)||0,defeated:Number(v.defeated)||0,bossesDefeated:Number(v.bossesDefeated)||0,items:Array.isArray(v.items)?v.items.length:0,bestiary:Array.isArray(v.bestiary)?v.bestiary.length:0,craftedWeapon:Number(v.craftedWeapon)||0,craftedArmor:Number(v.craftedArmor)||0,skillPoints:Number(v.skillPoints)||0,materials:v.materials||null,updatedAt:v.updatedAt||v.savedAt||null}}
+async function inspect(){
+ const out={mode:"read-only",origin:location.origin,path:location.pathname,localStorage:{},indexedDB:{status:"pending"}};
+ try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&/senderoSalvaje/i.test(k)){let v=null;try{v=JSON.parse(localStorage.getItem(k)||"null")}catch{};out.localStorage[k]=k==="senderoSalvajeLevelGuard"?{level:Number(v&&v.level)||Number(v)||null,updatedAt:v&&v.updatedAt||null}:summary(v)}}}catch(e){out.localStorage.error=String(e)}
+ $("report").value=JSON.stringify(out,null,2);
+ try{
+  if(!("indexedDB" in window))out.indexedDB={status:"unavailable"};
+  else if(typeof indexedDB.databases!=="function")out.indexedDB={status:"Browser no permite listar bases sin abrir una nueva; lectura omitida para no crear nada"};
+  else{
+   const dbs=await indexedDB.databases();
+   if(!dbs.some(x=>x.name==="senderoSalvajeDurable"))out.indexedDB={status:"senderoSalvajeDurable no existe"};
+   else{
+    const db=await new Promise((res,rej)=>{const q=indexedDB.open("senderoSalvajeDurable");q.onsuccess=()=>res(q.result);q.onerror=()=>rej(q.error)});
+    try{if(!db.objectStoreNames.contains("progress"))out.indexedDB={status:"No existe el almacén progress"};else out.indexedDB=await new Promise((res,rej)=>{const tx=db.transaction("progress","readonly"),q=tx.objectStore("progress").get("latest");q.onsuccess=()=>res({status:"read ok",save:summary(q.result)});q.onerror=()=>rej(q.error)})}finally{db.close()}
+   }
+  }
+ }catch(e){out.indexedDB={status:"error",detail:String(e&&e.message||e)}}
+ $("report").value=JSON.stringify(out,null,2);$("status").textContent="Informe listo. No se modificó ningún dato.";
+}
+$("copy").onclick=()=>{$("report").focus();$("report").select();try{document.execCommand("copy")}catch{}};
+$("refresh").onclick=inspect;inspect();
+</script></main></body></html>
