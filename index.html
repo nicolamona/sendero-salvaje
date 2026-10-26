@@ -1114,7 +1114,16 @@ function showSaveDiagnostic(){
   if(panel.isConnected)ta.value=JSON.stringify(report,null,2);
  })();
 }
-if(diagnosticMode){showSaveDiagnostic()}else{readDurableSave().then(durable=>{if(durable&&typeof durable==="object"&&Number(durable.level)>=Number(state.level||1)){state={...initial(),...durable};if(!Array.isArray(state.bestiary))state.bestiary=[];if(!state.materials||typeof state.materials!=="object")state.materials={wood:0,venom:0,rune:0,ice:0,essence:0}}durableLoaded=true;render()}).catch(()=>{durableLoaded=true;render()});}
+if(diagnosticMode){showSaveDiagnostic()}else{readDurableSave().then(durable=>{
+ // Reunir las tres copias locales y la copia durable: nunca arrancar desde una partida de menor nivel.
+ const candidates=[...startupSaves,...(durable&&typeof durable==="object"&&Number(durable.level)>=1?[durable]:[])];
+ const best=candidates.sort((a,b)=>Number(b.level||1)-Number(a.level||1))[0];
+ if(best){state={...initial(),...best};if(!Array.isArray(state.bestiary))state.bestiary=[];if(!state.materials||typeof state.materials!=="object")state.materials={wood:0,venom:0,rune:0,ice:0,essence:0}}
+ state.level=Math.max(Number(state.level)||1,readLevelGuard());
+ durableLoaded=true;render()
+ }).catch(()=>{state.level=Math.max(Number(state.level)||1,readLevelGuard());durableLoaded=true;render()});}
+// Registrar y comprobar actualizaciones del service worker, evitando que el acceso instalado quede anclado a una versión vieja.
+if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js",{updateViaCache:"none"}).then(reg=>reg.update()).catch(()=>{}));}
 </script>
 </body>
 </html>
